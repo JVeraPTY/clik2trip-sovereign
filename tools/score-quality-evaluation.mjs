@@ -85,24 +85,34 @@ for (const result of results) {
     failures.push(`result has a missing or duplicate caseId: ${result?.caseId ?? 'missing'}`);
     continue;
   }
+  let valid = true;
   const expectedCase = caseById.get(result.caseId);
-  if (!expectedCase) failures.push(`result references unknown case ${result.caseId}`);
+  if (!expectedCase) {
+    failures.push(`result references unknown case ${result.caseId}`);
+    valid = false;
+  }
   if (expectedCase && result.imageSha256 !== expectedCase.imageSha256) {
     failures.push(`${result.caseId} result references the wrong image digest`);
+    valid = false;
   }
   if (forbiddenFields.some((field) => Object.hasOwn(result, field))) {
     failures.push(`${result.caseId} contains a privacy-forbidden field`);
+    valid = false;
   }
   if (result.promptHash !== cases.prompt.sha256 || result.promptCategory !== cases.prompt.category) {
     failures.push(`${result.caseId} does not use the frozen prompt identity`);
+    valid = false;
   }
   if (!result.actual || !Array.isArray(result.actual.restrictions) || !Array.isArray(result.recommendationIds)) {
     failures.push(`${result.caseId} lacks structured output or recommendations`);
+    valid = false;
   }
   if (typeof result.success !== 'boolean' || typeof result.explanationGrounded !== 'boolean') {
     failures.push(`${result.caseId} lacks success or explanation review`);
+    valid = false;
   }
-  resultById.set(result.caseId, result);
+  if (result.success === false) failures.push(`${result.caseId} inference failed`);
+  if (valid) resultById.set(result.caseId, result);
 }
 
 if (resultById.size !== cases.cases.length) {
@@ -146,7 +156,7 @@ for (const item of cases.cases) {
 }
 
 const successful = scored.filter((item) => item.success);
-const categoryOutcomes = successful.map((item) => (item.categoryCorrect ? 1 : 0));
+const categoryOutcomes = scored.map((item) => (item.categoryCorrect ? 1 : 0));
 const confidencePairs = successful.filter((item) => Number.isFinite(item.confidence));
 const report = {
   schemaVersion: 1,
@@ -158,13 +168,13 @@ const report = {
   successfulResults: successful.length,
   metrics: {
     categoryAccuracy: average(categoryOutcomes),
-    destinationExactOrNotVisibleAccuracy: average(successful.map((item) => (item.destinationCorrect ? 1 : 0))),
-    durationAccuracy: average(successful.map((item) => (item.durationCorrect ? 1 : 0))),
-    restrictionPrecision: average(successful.map((item) => item.restrictionPrecision)),
-    restrictionRecall: average(successful.map((item) => item.restrictionRecall)),
-    top1RecommendationAccuracy: average(successful.map((item) => (item.topOneCorrect ? 1 : 0))),
-    top3RecommendationAccuracy: average(successful.map((item) => (item.topThreeCorrect ? 1 : 0))),
-    explanationGroundingRate: average(successful.map((item) => (item.explanationGrounded ? 1 : 0))),
+    destinationExactOrNotVisibleAccuracy: average(scored.map((item) => (item.destinationCorrect ? 1 : 0))),
+    durationAccuracy: average(scored.map((item) => (item.durationCorrect ? 1 : 0))),
+    restrictionPrecision: average(scored.map((item) => item.restrictionPrecision)),
+    restrictionRecall: average(scored.map((item) => item.restrictionRecall)),
+    top1RecommendationAccuracy: average(scored.map((item) => (item.topOneCorrect ? 1 : 0))),
+    top3RecommendationAccuracy: average(scored.map((item) => (item.topThreeCorrect ? 1 : 0))),
+    explanationGroundingRate: average(scored.map((item) => (item.explanationGrounded ? 1 : 0))),
     confidenceBrierScore: average(confidencePairs.map((item) => (item.confidence - (item.categoryCorrect ? 1 : 0)) ** 2)),
     meanConfidenceWhenCategoryCorrect: average(confidencePairs.filter((item) => item.categoryCorrect).map((item) => item.confidence)),
     meanConfidenceWhenCategoryIncorrect: average(confidencePairs.filter((item) => !item.categoryCorrect).map((item) => item.confidence)),
