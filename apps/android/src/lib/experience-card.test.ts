@@ -30,6 +30,26 @@ const localTour: LocalTour = {
   includes: [],
   excludes: [],
   searchTerms: [],
+  source: 'clik2trip',
+};
+
+const demoTour: LocalTour = {
+  tourRefId: 'demo-isla-otoque-dia-completo',
+  slug: 'isla-otoque-dia-completo',
+  title: 'Isla Otoque día completo con almuerzo local',
+  summary: 'Travesía por el golfo hasta una isla de pescadores.',
+  destinationName: 'Isla Otoque',
+  categoryName: 'Islas',
+  durationMin: 540,
+  includes: [],
+  excludes: [],
+  searchTerms: [],
+  source: 'demo-seed',
+  regionId: 'panama-city',
+  geo: { lat: 8.6333, lng: -79.6167 },
+  priceFrom: 95,
+  currency: 'USD',
+  providerName: 'Operador demo Pacífico',
 };
 
 describe('experience cards', () => {
@@ -67,5 +87,23 @@ describe('experience cards', () => {
     const other = { ...catalogEntry, tourRefId: 'tour-rafting-pacuare' };
 
     expect(recommendationCard(localTour, [other]).thumbnailUrl).toBeNull();
+  });
+
+  it('renders a demonstration entry complete with no catalogue at all', () => {
+    const card = recommendationCard(demoTour, []);
+
+    expect(card.priceFrom).toBe(95);
+    expect(card.currency).toBe('USD');
+    expect(card.providerName).toBe('Operador demo Pacífico');
+    expect(card.source).toBe('demo-seed');
+  });
+
+  it('promises no confirmation for an entry no operator will confirm', () => {
+    expect(recommendationCard(demoTour, []).confirmationType).toBeNull();
+  });
+
+  it('marks where every card came from', () => {
+    expect(catalogCard(catalogEntry).source).toBe('clik2trip');
+    expect(recommendationCard(localTour, []).source).toBe('clik2trip');
   });
 });

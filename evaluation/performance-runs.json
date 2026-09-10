@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "requirements": {
+    "coldRuns": 1,
+    "warmRuns": 5
+  },
+  "qualityResultsFile": "quality/results.jsonl",
+  "qualityRunKind": "warm",
+  "runs": [
+    {
+      "kind": "cold",
+      "file": "device-runs/compatibility-gate-online-2026-09-09.json"
+    },
+    {
+      "kind": "warm",
+      "file": "device-runs/compatibility-gate-offline-2026-09-09.json"
+    },
+    {
+      "kind": "warm",
+      "file": "device-runs/phase-2-offline-recommendation-2026-09-09.json"
+    }
+  ]
+}

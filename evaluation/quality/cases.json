@@ -1,0 +1,743 @@
+{
+  "schemaVersion": 1,
+  "frozenBeforeInferenceAt": "2026-09-10T17:25:00.000Z",
+  "prompt": {
+    "category": "tourism-image-extraction-v3",
+    "sha256": "21ddd3b048fe0a927016da17107ebe42d72d7710e7ff82231e8fb83d1ee94ec4"
+  },
+  "cases": [
+    {
+      "id": "quality-001",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/Rafting_Sarapiqui_river._Costa_Rica.jpg/1280px-Rafting_Sarapiqui_river._Costa_Rica.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Rafting_Sarapiqui_river._Costa_Rica.jpg",
+      "creator": "Steve Jurvetson",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "expected": {
+        "acceptedCategories": [
+          "rafting",
+          "whitewater",
+          "adventure"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "tour-rafting-pacuare",
+          "demo-rafting-chiriqui-viejo"
+        ],
+        "explanationEvidence": [
+          "river",
+          "raft",
+          "rapids"
+        ]
+      },
+      "imageFile": "images/quality-001.jpg",
+      "imageSha256": "2436ff9392cd90f13ff96483c9d5d3b73c5acb12d9e7681f09b607b0ef5c2f78",
+      "imageBytes": 569217
+    },
+    {
+      "id": "quality-002",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Arenal_Volcano_-_Costa_Rica_-_by_Ardyiii.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Arenal_Volcano_-_Costa_Rica_-_by_Ardyiii.jpg",
+      "creator": "Ardyiii",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "expected": {
+        "acceptedCategories": [
+          "volcano",
+          "hiking",
+          "nature"
+        ],
+        "destination": {
+          "visibility": "landmark-visible",
+          "acceptedValues": [
+            "arenal",
+            "arenal volcano",
+            "costa rica"
+          ]
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "tour-volcan-arenal"
+        ],
+        "explanationEvidence": [
+          "volcano",
+          "mountain",
+          "forest"
+        ]
+      },
+      "imageFile": "images/quality-002.jpg",
+      "imageSha256": "4e1efa7600ad4e72b69ea204fb996835d160808a0dea43a1444675f3432a2266",
+      "imageBytes": 459248
+    },
+    {
+      "id": "quality-003",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/CostaRica_Arenal_Volcano_1968Flow_%28pixinn.net%29.jpg/1280px-CostaRica_Arenal_Volcano_1968Flow_%28pixinn.net%29.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:CostaRica_Arenal_Volcano_1968Flow_(pixinn.net).jpg",
+      "creator": "Christophe Meneboeuf",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "expected": {
+        "acceptedCategories": [
+          "volcano",
+          "hiking",
+          "nature"
+        ],
+        "destination": {
+          "visibility": "landmark-visible",
+          "acceptedValues": [
+            "arenal",
+            "arenal volcano",
+            "costa rica"
+          ]
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "tour-volcan-arenal"
+        ],
+        "explanationEvidence": [
+          "volcano",
+          "lava",
+          "forest"
+        ]
+      },
+      "imageFile": "images/quality-003.jpg",
+      "imageSha256": "67e35a46c933db1a1f73176fd401b9dbbe68c9f147a18b9bee9c15c3f607f060",
+      "imageBytes": 394496
+    },
+    {
+      "id": "quality-004",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Rinc%C3%B3n_de_la_Vieja_Hot_Spring.jpg/1280px-Rinc%C3%B3n_de_la_Vieja_Hot_Spring.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Rinc%C3%B3n_de_la_Vieja_Hot_Spring.jpg",
+      "creator": "Flicka",
+      "license": "CC BY 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.5",
+      "expected": {
+        "acceptedCategories": [
+          "hot springs",
+          "wellness",
+          "nature"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "tour-termales-privados",
+          "demo-termales-barro-el-valle",
+          "demo-termales-caldera"
+        ],
+        "explanationEvidence": [
+          "water",
+          "thermal",
+          "volcanic"
+        ]
+      },
+      "imageFile": "images/quality-004.jpg",
+      "imageSha256": "82b9d7af70cd73a2a7d25a602813ab0a567e76998f1b5336d2e98246cd676f92",
+      "imageBytes": 471215
+    },
+    {
+      "id": "quality-005",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Baldi_Hot_Springs%2C_Fortuna%2C_San_Carlos%2C_Costa_Rica.jpg/1280px-Baldi_Hot_Springs%2C_Fortuna%2C_San_Carlos%2C_Costa_Rica.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Baldi_Hot_Springs,_Fortuna,_San_Carlos,_Costa_Rica.jpg",
+      "creator": "John Menard",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "expected": {
+        "acceptedCategories": [
+          "hot springs",
+          "wellness",
+          "relaxation"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "tour-termales-privados",
+          "demo-termales-barro-el-valle",
+          "demo-termales-caldera"
+        ],
+        "explanationEvidence": [
+          "pool",
+          "water",
+          "relaxation"
+        ]
+      },
+      "imageFile": "images/quality-005.jpg",
+      "imageSha256": "bad2785b647189f1cd4923a0b4b969fb1b730c4070e29d312408f62a59ab5c9a",
+      "imageBytes": 399360
+    },
+    {
+      "id": "quality-006",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Calle_Casco_Viejo.jpg/1280px-Calle_Casco_Viejo.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Calle_Casco_Viejo.jpg",
+      "creator": "Melpanama",
+      "license": "Public domain",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "expected": {
+        "acceptedCategories": [
+          "culture",
+          "architecture",
+          "historic district",
+          "city walk"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-casco-viejo-a-pie",
+          "demo-panama-viejo-museo"
+        ],
+        "explanationEvidence": [
+          "street",
+          "architecture",
+          "historic"
+        ]
+      },
+      "imageFile": "images/quality-006.jpg",
+      "imageSha256": "14ce3a880d8a73c4299ed932a042593bea255c8bb8c18aff30d2d8a39c8c654e",
+      "imageBytes": 636430
+    },
+    {
+      "id": "quality-007",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/11/Palacio_Bol%C3%ADvar_Casco_Viejo_Panam%C3%A1.jpg/1280px-Palacio_Bol%C3%ADvar_Casco_Viejo_Panam%C3%A1.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Palacio_Bol%C3%ADvar_Casco_Viejo_Panam%C3%A1.jpg",
+      "creator": "Rodolfo Aragundi",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "expected": {
+        "acceptedCategories": [
+          "culture",
+          "architecture",
+          "historic building"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-casco-viejo-a-pie",
+          "demo-panama-viejo-museo"
+        ],
+        "explanationEvidence": [
+          "building",
+          "architecture",
+          "historic"
+        ]
+      },
+      "imageFile": "images/quality-007.jpg",
+      "imageSha256": "50cc99add08edd01daa60cb8858868b4f958181ffca684effb7e2008e2f9206d",
+      "imageBytes": 304738
+    },
+    {
+      "id": "quality-008",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Fountain_in_Casco_Viejo_Panama_2013.JPG/1280px-Fountain_in_Casco_Viejo_Panama_2013.JPG",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Fountain_in_Casco_Viejo_Panama_2013.JPG",
+      "creator": "MusikAnimal",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "expected": {
+        "acceptedCategories": [
+          "culture",
+          "architecture",
+          "historic district",
+          "city walk"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-casco-viejo-a-pie",
+          "demo-panama-viejo-museo"
+        ],
+        "explanationEvidence": [
+          "fountain",
+          "plaza",
+          "architecture"
+        ]
+      },
+      "imageFile": "images/quality-008.jpg",
+      "imageSha256": "b8ab9895c0e39c722ca2bbd8bf19e48daa3d2d8ea1cb947cd7a3382d1402fc4f",
+      "imageBytes": 323336
+    },
+    {
+      "id": "quality-009",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/be/Miraflores_Locks_Panama_1914.JPG/1280px-Miraflores_Locks_Panama_1914.JPG",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Miraflores_Locks_Panama_1914.JPG",
+      "creator": "Gordon Panoramic Photo Co.",
+      "license": "Public domain",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "expected": {
+        "acceptedCategories": [
+          "canal",
+          "engineering",
+          "culture",
+          "history"
+        ],
+        "destination": {
+          "visibility": "landmark-visible",
+          "acceptedValues": [
+            "panama canal",
+            "miraflores",
+            "panama"
+          ]
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-canal-esclusas-miraflores",
+          "demo-transito-parcial-canal"
+        ],
+        "explanationEvidence": [
+          "locks",
+          "canal",
+          "ship"
+        ]
+      },
+      "imageFile": "images/quality-009.jpg",
+      "imageSha256": "106c7dc852a8fe31a83ddb08efe5fa239af70341a8ccb2becf180360c0a18fec",
+      "imageBytes": 66749
+    },
+    {
+      "id": "quality-010",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Panama_Canal_-_Pacific_Side_Entrance.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Panama_Canal_-_Pacific_Side_Entrance.jpg",
+      "creator": "Camilo Molina; derivative by MrPanyGoff",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "expected": {
+        "acceptedCategories": [
+          "canal",
+          "navigation",
+          "engineering",
+          "culture"
+        ],
+        "destination": {
+          "visibility": "landmark-visible",
+          "acceptedValues": [
+            "panama canal",
+            "panama"
+          ]
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-transito-parcial-canal",
+          "demo-canal-esclusas-miraflores"
+        ],
+        "explanationEvidence": [
+          "canal",
+          "waterway",
+          "ship"
+        ]
+      },
+      "imageFile": "images/quality-010.jpg",
+      "imageSha256": "ee3dc0ef9f9913d9a9955cef7c292dd25b016e8dd403d5ee1ebc06601c8b4067",
+      "imageBytes": 533125
+    },
+    {
+      "id": "quality-011",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Jedna_z_wyspek_archipelagu_San_Blas_w_Panamie.jpg/1280px-Jedna_z_wyspek_archipelagu_San_Blas_w_Panamie.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Jedna_z_wyspek_archipelagu_San_Blas_w_Panamie.jpg",
+      "creator": "MBialy",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "expected": {
+        "acceptedCategories": [
+          "island",
+          "beach",
+          "tropical",
+          "snorkeling"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-san-blas-tres-islas",
+          "demo-isla-perro-naufragio",
+          "demo-cayos-holandeses-dos-dias"
+        ],
+        "explanationEvidence": [
+          "island",
+          "beach",
+          "sea"
+        ]
+      },
+      "imageFile": "images/quality-011.jpg",
+      "imageSha256": "d45280315492036d3095482ad8c85d3ed135c692c0ab714eb8c0a11371aeaaad",
+      "imageBytes": 322720
+    },
+    {
+      "id": "quality-012",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Islas_San_Blas_strand.jpg/1280px-Islas_San_Blas_strand.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Islas_San_Blas_strand.jpg",
+      "creator": "Haakon S. Krohn",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "expected": {
+        "acceptedCategories": [
+          "beach",
+          "island",
+          "tropical",
+          "snorkeling"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-san-blas-tres-islas",
+          "demo-isla-perro-naufragio",
+          "demo-cayos-holandeses-dos-dias"
+        ],
+        "explanationEvidence": [
+          "beach",
+          "sand",
+          "sea"
+        ]
+      },
+      "imageFile": "images/quality-012.jpg",
+      "imageSha256": "04856c13655c5499d5579b9ad297320a2d06f21ce6979221b2661db9ff059741",
+      "imageBytes": 257586
+    },
+    {
+      "id": "quality-013",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/72/Guna_Yala_Island.jpg/1280px-Guna_Yala_Island.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Guna_Yala_Island.jpg",
+      "creator": "Ayaita",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+      "expected": {
+        "acceptedCategories": [
+          "island",
+          "beach",
+          "tropical",
+          "snorkeling"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-san-blas-tres-islas",
+          "demo-isla-perro-naufragio",
+          "demo-cayos-holandeses-dos-dias"
+        ],
+        "explanationEvidence": [
+          "island",
+          "palm",
+          "sea"
+        ]
+      },
+      "imageFile": "images/quality-013.jpg",
+      "imageSha256": "4c98a084ed4cc7d4bf6195b12413764940aa4e89a56bdaaaa727882840fcaf1a",
+      "imageBytes": 179891
+    },
+    {
+      "id": "quality-014",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/48/View_from_Finca_Lerida_coffee_plantation_-_Flickr_-_gailhampshire.jpg/1280px-View_from_Finca_Lerida_coffee_plantation_-_Flickr_-_gailhampshire.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:View_from_Finca_Lerida_coffee_plantation_-_Flickr_-_gailhampshire.jpg",
+      "creator": "gailhampshire",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "expected": {
+        "acceptedCategories": [
+          "nature",
+          "mountain",
+          "landscape",
+          "agritourism"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-sendero-los-quetzales",
+          "demo-boquete-fincas-cafe"
+        ],
+        "explanationEvidence": [
+          "mountain",
+          "vegetation",
+          "plantation"
+        ]
+      },
+      "imageFile": "images/quality-014.jpg",
+      "imageSha256": "1b2fb3b1c3c74e6c1ac8f33071e828c9059cefc083a20e8c050072749c9247f8",
+      "imageBytes": 377648
+    },
+    {
+      "id": "quality-015",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Foto_desde_una_plantacion_de_cafe_en_Palmira.jpg/1280px-Foto_desde_una_plantacion_de_cafe_en_Palmira.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Foto_desde_una_plantacion_de_cafe_en_Palmira.jpg",
+      "creator": "Gkbayro",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "expected": {
+        "acceptedCategories": [
+          "nature",
+          "mountain",
+          "forest",
+          "agritourism"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-sendero-los-quetzales",
+          "demo-boquete-fincas-cafe"
+        ],
+        "explanationEvidence": [
+          "mountain",
+          "forest",
+          "vegetation"
+        ]
+      },
+      "imageFile": "images/quality-015.jpg",
+      "imageSha256": "ad8e4f661d074ea482cb3484a904b58c3c713d8d17c061f1110e1e5cc7315e8a",
+      "imageBytes": 388069
+    },
+    {
+      "id": "quality-016",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1c/Boquete%2C_Panama.jpg/1280px-Boquete%2C_Panama.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Boquete,_Panama.jpg",
+      "creator": "Michael McCullough",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "expected": {
+        "acceptedCategories": [
+          "nature",
+          "mountain",
+          "landscape",
+          "hiking"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-sendero-los-quetzales",
+          "demo-volcan-baru-noche",
+          "demo-boquete-fincas-cafe"
+        ],
+        "explanationEvidence": [
+          "mountain",
+          "valley",
+          "forest"
+        ]
+      },
+      "imageFile": "images/quality-016.jpg",
+      "imageSha256": "e8596d6c997632f84d9ad7c8d71770e6a98a46bb815cf11288b0d46ecff0552a",
+      "imageBytes": 567784
+    },
+    {
+      "id": "quality-017",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/Wasserfall_Bei_Boquete_%28155902323%29.jpeg/1280px-Wasserfall_Bei_Boquete_%28155902323%29.jpeg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Wasserfall_Bei_Boquete_(155902323).jpeg",
+      "creator": "Dronepicr",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+      "expected": {
+        "acceptedCategories": [
+          "waterfall",
+          "hiking",
+          "nature"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-chorro-el-macho-ranas-doradas",
+          "demo-sendero-los-quetzales"
+        ],
+        "explanationEvidence": [
+          "waterfall",
+          "forest",
+          "trail"
+        ]
+      },
+      "imageFile": "images/quality-017.jpg",
+      "imageSha256": "84b4b860b61eee57f8ade30b975bfabb6c1260ef8a24ea85b77a485752f66a09",
+      "imageBytes": 526712
+    },
+    {
+      "id": "quality-018",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/Boquete_H%C3%A4ngebr%C3%BCck_%28155902293%29.jpeg/1280px-Boquete_H%C3%A4ngebr%C3%BCck_%28155902293%29.jpeg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Boquete_H%C3%A4ngebr%C3%BCck_(155902293).jpeg",
+      "creator": "Dronepicr",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+      "expected": {
+        "acceptedCategories": [
+          "hiking",
+          "bridge",
+          "nature",
+          "adventure"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-sendero-los-quetzales",
+          "demo-chorro-el-macho-ranas-doradas"
+        ],
+        "explanationEvidence": [
+          "bridge",
+          "forest",
+          "trail"
+        ]
+      },
+      "imageFile": "images/quality-018.jpg",
+      "imageSha256": "ab3e5e86aa630061f179a5d077a301c8d5dacb6795df3e6a3578d165302974e1",
+      "imageBytes": 856860
+    },
+    {
+      "id": "quality-019",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1f/DiveTulsa_%282062961046%29.jpg/1280px-DiveTulsa_%282062961046%29.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:DiveTulsa_(2062961046).jpg",
+      "creator": "Laszlo Ilyes",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "expected": {
+        "acceptedCategories": [
+          "diving",
+          "scuba",
+          "underwater",
+          "marine"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-buceo-coiba",
+          "demo-buceo-iniciacion-bocas"
+        ],
+        "explanationEvidence": [
+          "diver",
+          "scuba",
+          "underwater"
+        ]
+      },
+      "imageFile": "images/quality-019.jpg",
+      "imageSha256": "e65a1f53bbadaad3c8274b79d30ad913aa0995bcae7da07c4602782c9baf2ca4",
+      "imageBytes": 109834
+    },
+    {
+      "id": "quality-020",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Isla_Canales_de_Afuera_Shallows_%282063365818%29.jpg/1280px-Isla_Canales_de_Afuera_Shallows_%282063365818%29.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Isla_Canales_de_Afuera_Shallows_(2063365818).jpg",
+      "creator": "Laszlo Ilyes",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "expected": {
+        "acceptedCategories": [
+          "snorkeling",
+          "diving",
+          "underwater",
+          "marine"
+        ],
+        "destination": {
+          "visibility": "not-visible",
+          "acceptedValues": []
+        },
+        "duration": {
+          "mode": "unknown"
+        },
+        "restrictions": [],
+        "topRecommendationIds": [
+          "demo-buceo-coiba",
+          "demo-buceo-iniciacion-bocas",
+          "demo-golfo-chiriqui-isla-gamez"
+        ],
+        "explanationEvidence": [
+          "reef",
+          "water",
+          "marine"
+        ]
+      },
+      "imageFile": "images/quality-020.jpg",
+      "imageSha256": "0516322f37dbf4773aec2d450da7c7ba861da58ecfd96c8d20d1a3907bac2578",
+      "imageBytes": 123135
+    }
+  ]
+}

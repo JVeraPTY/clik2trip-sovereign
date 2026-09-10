@@ -1,6 +1,6 @@
 {
   "name": "cliktotrip-sovereign",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "license": "MIT",
   "packageManager": "pnpm@11.19.0",
@@ -13,6 +13,10 @@
     "typecheck": "pnpm -r --if-present typecheck",
     "test": "vitest run",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
+    "evaluation:report": "node tools/build-performance-report.mjs",
+    "evaluation:report:strict": "node tools/build-performance-report.mjs --strict",
+    "evaluation:quality": "node tools/score-quality-evaluation.mjs",
+    "evaluation:quality:strict": "node tools/score-quality-evaluation.mjs --strict",
     "android:start": "pnpm --filter @clik2trip/android start",
     "android:device": "pnpm --filter @clik2trip/android android",
     "android:prebuild": "pnpm --filter @clik2trip/android prebuild",

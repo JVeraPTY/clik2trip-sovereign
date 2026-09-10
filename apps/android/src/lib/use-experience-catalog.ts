@@ -1,10 +1,5 @@
-import {
-  Clik2TripGraphQlClient,
-  type CatalogExperience,
-} from '@clik2trip/cliktotrip-client';
-import { useEffect, useMemo, useState } from 'react';
-
-const defaultGateway = 'https://www.clik2trip.com/graphql';
+import type { CatalogExperience, Clik2TripGraphQlClient } from '@clik2trip/cliktotrip-client';
+import { useEffect, useState } from 'react';
 
 function errorCode(cause: unknown): string {
   if (cause && typeof cause === 'object' && 'code' in cause) return String(cause.code);
@@ -16,14 +11,7 @@ function errorCode(cause: unknown): string {
  * rather than inside the list so a recommendation can reuse the same entries
  * for its own card without asking the network a second time.
  */
-export function useExperienceCatalog() {
-  const client = useMemo(
-    () =>
-      new Clik2TripGraphQlClient({
-        endpoint: process.env.EXPO_PUBLIC_CLIKTOTRIP_GATEWAY ?? defaultGateway,
-      }),
-    [],
-  );
+export function useExperienceCatalog(client: Clik2TripGraphQlClient) {
   const [experiences, setExperiences] = useState<CatalogExperience[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

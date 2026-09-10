@@ -33,6 +33,24 @@ describe('readable errors', () => {
     expect(readable.message).toContain('USD₮ de prueba');
   });
 
+  it('explains a resolver failure instead of showing a bare libc code', () => {
+    const readable = toReadableError('EAI_NODATA');
+
+    // A phone in airplane mode surfaced exactly this on the settlement screen.
+    expect(readable.code).toBe('EAI_NODATA');
+    expect(readable.message).toContain('conexión');
+    expect(readable.message).not.toBe(
+      'Algo no salió como esperábamos. El detalle técnico está abajo.',
+    );
+  });
+
+  it('covers the socket failures a device with no route produces', () => {
+    for (const code of ['EAI_NONAME', 'ENETUNREACH', 'ETIMEDOUT', 'Network request failed']) {
+      expect(hasReadableMessage(code)).toBe(true);
+      expect(toReadableError(code).code).toBe(code);
+    }
+  });
+
   it('falls back without losing an unmapped or malformed error', () => {
     expect(toReadableError('Invalid key provided to SecureStore.')).toEqual({
       code: 'Invalid key provided to SecureStore.',

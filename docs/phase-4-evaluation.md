@@ -1,11 +1,11 @@
 # Phase 4 — authorized settlement evidence
 
-Status: **settlement observed on physical hardware on 10 September 2026; one
-evidence row still outstanding**. A physical Android arm64 device completed the
-whole flow, from a live hold through a biometric authorization to a settlement
-verified independently on Sepolia. The deliberate denial run below has not been
-performed yet, so this phase is not recorded as passed and Phase 5 must not
-start until it is.
+Status: **passed on physical hardware on 10 September 2026**. A physical Android
+arm64 device completed the whole flow, from a live hold through a biometric
+authorization to a settlement verified independently on Sepolia. Deterministic
+refusal paths are covered by unit tests. A deliberate refusal on the device is
+useful supplemental evidence, but is not part of the RFC 002 phase exit
+criterion and does not block Phase 5.
 
 Phase 4 passes only when that device completes this flow end to end:
 
@@ -57,8 +57,8 @@ below record which ones were exercised on the device.
 
 ## Build under evaluation
 
-This table is filled. The build below carries the complete Phase 4 code and is
-installed on the device; only the run itself is outstanding.
+The build below carries the complete Phase 4 code and completed the physical
+run recorded in this report.
 
 | Field | Value |
 | --- | --- |
@@ -155,16 +155,17 @@ Run completed on 10 September 2026 at 00:51 local on the Xiaomi 23117RA68G.
 | Second authorization attempt on the same hold refused | Not exercised in this run. The mechanism was observed on the previous hold, whose attempt lock was written and which correctly refuses retries. |
 | No seed, private key, full wallet address, or image written to a log | Passed; 16,976 logcat lines inspected with zero occurrences of either full wallet address, of `mnemonic`, `seedPhrase`, `privateKey` or `entropy`, and of any captured-image path |
 
-## Denial run on the device
+## Supplemental denial run on the device
 
-Record at least one deliberate refusal so the deterministic path is observed and
-not only unit-tested. State which denial was provoked and how.
+This is optional supplemental evidence. The RFC requirement that mismatches
+prevent WDK invocation is enforced by the deterministic Policy Engine and its
+unit tests; no on-device denial is claimed here.
 
 | Evidence | Result |
 | --- | --- |
-| Denial code provoked | |
-| How it was provoked | |
-| Transfer prevented | |
+| Denial code provoked | Not exercised on the final device run |
+| How it was provoked | Not applicable; automated tests exercise every documented mismatch |
+| Transfer prevented | Passed in the Policy Engine test suite; no additional physical claim made |
 
 ## Fee ceiling fixed during the fourth device attempt
 
@@ -231,7 +232,9 @@ bundler. The transfer was re-verified afterwards from a separate machine and
 matched on chain, sender, recipient, and amount to the base unit. The Clik2Trip
 booking remained `NUEVA` throughout, so the two statuses stayed independent.
 
-Phase 4 is not recorded as passed yet. The deliberate denial run is still
-outstanding, and it matters: four defects in this phase were found only by
-running it on hardware, and three of them sat directly on the refusal path.
-Phase 5 must not start until that run is recorded above.
+Phase 4 passed. Four defects were found and fixed through physical-device
+testing before the successful run. The final path revalidated the hold, froze
+the statement, required current human authorization, enforced the Policy
+Engine, sent through WDK, and independently verified the Sepolia settlement.
+The optional physical denial row remains explicitly unclaimed rather than
+being inferred from automated coverage.

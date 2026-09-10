@@ -20,6 +20,9 @@ const checkout: WalletCheckout = {
   expiresAt: '2026-09-09T15:10:00.000Z',
   holdExpiresAt: '2026-09-09T15:15:00.000Z',
   statementHash: `0x${'4'.repeat(64)}`,
+  bookingTotal: '75.50',
+  bookingCurrency: 'USD',
+  tariffMode: 'BOOKING_TOTAL',
 };
 
 const transfer = {

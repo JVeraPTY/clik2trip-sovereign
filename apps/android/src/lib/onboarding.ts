@@ -1,4 +1,4 @@
-export type OnboardingStepId = 'vision' | 'catalog' | 'wallet';
+export type OnboardingStepId = 'region' | 'vision' | 'catalog' | 'wallet';
 
 export type OnboardingStepStatus = 'PENDING' | 'RUNNING' | 'DONE' | 'FAILED';
 
@@ -27,6 +27,7 @@ export interface OnboardingProgress {
 }
 
 export const onboardingLabels: Record<OnboardingStepId, string> = {
+  region: 'Ubicando tu zona',
   vision: 'Cargando el modelo de visión',
   catalog: 'Preparando el catálogo local',
   wallet: 'Inicializando la wallet de prueba',

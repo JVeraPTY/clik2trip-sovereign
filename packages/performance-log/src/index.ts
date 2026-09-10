@@ -47,7 +47,10 @@ export function createPerformanceRecord(input: QvacTimingInput): PerformanceReco
   });
 }
 
-function percentile(values: number[], rank: number): number {
+export function percentile(values: number[], rank: number): number {
+  if (!Number.isFinite(rank) || rank <= 0 || rank > 1) {
+    throw new Error('PERCENTILE_RANK_OUT_OF_RANGE');
+  }
   if (values.length === 0) return 0;
   const sorted = [...values].sort((left, right) => left - right);
   const index = Math.min(sorted.length - 1, Math.ceil(rank * sorted.length) - 1);
@@ -70,6 +73,18 @@ export function summarizePerformance(records: PerformanceRecord[]) {
     medianTokensPerSecond: percentile(
       successful.map((record) => record.tokensPerSecond),
       0.5,
+    ),
+    p95TokensPerSecond: percentile(
+      successful.map((record) => record.tokensPerSecond),
+      0.95,
+    ),
+    medianLoadMs: percentile(
+      successful.map((record) => record.loadMs),
+      0.5,
+    ),
+    p95LoadMs: percentile(
+      successful.map((record) => record.loadMs),
+      0.95,
     ),
   };
 }

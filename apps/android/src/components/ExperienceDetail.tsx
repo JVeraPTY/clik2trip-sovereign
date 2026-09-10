@@ -1,10 +1,5 @@
-import {
-  Clik2TripGraphQlClient,
-  type AvailabilitySlot,
-  type BookingHold,
-  type LiveTour,
-} from '@clik2trip/cliktotrip-client';
-import { useEffect, useMemo, useState } from 'react';
+import type { AvailabilitySlot, BookingHold, LiveTour } from '@clik2trip/cliktotrip-client';
+import { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import {
@@ -14,13 +9,12 @@ import {
   slotsForDate,
 } from '../lib/availability-view';
 import { confirmationLabel, experienceFootnote } from '../lib/catalog-format';
+import type { BookingSource } from '../lib/booking-source';
 import { buildAvailabilityWindow, eligibleAvailability, remainingHoldSeconds } from '../lib/commerce';
 import type { ExperienceCardData } from '../lib/experience-card';
 import { brand, radius, space, text } from '../theme/brand';
 import { ErrorNotice } from './ErrorNotice';
 import { SandboxSettlement } from './SandboxSettlement';
-
-const defaultGateway = 'https://www.clik2trip.com/graphql';
 
 type DetailState = 'LOADING' | 'SELECTING' | 'CUSTOMER' | 'CREATING_HOLD' | 'HOLD_ACTIVE' | 'HOLD_EXPIRED' | 'ERROR';
 
@@ -87,19 +81,12 @@ function PrimaryButton({
 export function ExperienceDetail({
   card,
   onBack,
-  slug,
+  source,
 }: {
   card: ExperienceCardData;
   onBack: () => void;
-  slug: string;
+  source: BookingSource;
 }) {
-  const client = useMemo(
-    () =>
-      new Clik2TripGraphQlClient({
-        endpoint: process.env.EXPO_PUBLIC_CLIKTOTRIP_GATEWAY ?? defaultGateway,
-      }),
-    [],
-  );
   const [state, setState] = useState<DetailState>('LOADING');
   const [liveTour, setLiveTour] = useState<LiveTour | null>(null);
   const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
@@ -122,12 +109,12 @@ export function ExperienceDetail({
     let active = true;
     async function load() {
       try {
-        const currentTour = await client.getTour({ slug, locale: 'es' });
+        const currentTour = await source.getTour();
         if (!currentTour || currentTour.tourRefId !== card.tourRefId) {
           throw new Error('CATALOGO_LOCAL_DESACTUALIZADO');
         }
         const window = buildAvailabilityWindow(new Date());
-        const availability = await client.getAvailability({
+        const availability = await source.getAvailability({
           tourRefId: currentTour.tourRefId,
           ...window,
         });
@@ -150,7 +137,7 @@ export function ExperienceDetail({
     return () => {
       active = false;
     };
-  }, [card.tourRefId, client, slug]);
+  }, [card.tourRefId, source]);
 
   useEffect(() => {
     if (!hold?.holdExpiresAt) return;
@@ -179,11 +166,11 @@ export function ExperienceDetail({
     try {
       // Price and capacity are re-read immediately before the mutation. The
       // list the traveler chose from may be seconds old.
-      const currentTour = await client.getTour({ slug, locale: 'es' });
+      const currentTour = await source.getTour();
       if (!currentTour || currentTour.tourRefId !== liveTour.tourRefId) {
         throw new Error('CATALOGO_LOCAL_DESACTUALIZADO');
       }
-      const currentSlots = await client.getAvailability({
+      const currentSlots = await source.getAvailability({
         tourRefId: currentTour.tourRefId,
         from: selectedSlot.date,
         to: selectedSlot.date,
@@ -194,7 +181,7 @@ export function ExperienceDetail({
       if (!currentSlot || currentSlot.spotsLeft < participants) {
         throw new Error('SIN_DISPONIBILIDAD');
       }
-      const created = await client.createBookingHold({
+      const created = await source.createBookingHold({
         tourRefId: currentTour.tourRefId,
         date: currentSlot.date,
         timeSlot: currentSlot.timeSlot,
@@ -248,6 +235,14 @@ export function ExperienceDetail({
           {experienceFootnote(card.durationMin, card.providerName)}
         </Text>
       ) : null}
+
+      {source.bookable ? null : (
+        <Text style={styles.demoNotice}>
+          EXPERIENCIA DE DEMOSTRACIÓN. Los datos son una muestra escrita para este repositorio y no
+          proceden del catálogo de Clik2Trip. La reserva se crea solo en este teléfono: no se
+          contacta a ningún operador ni se reserva ningún cupo real.
+        </Text>
+      )}
 
       {state === 'LOADING' ? (
         <Text style={styles.meta}>Consultando precio y disponibilidad…</Text>
@@ -414,7 +409,7 @@ export function ExperienceDetail({
       ) : null}
 
       {error ? <ErrorNotice code={error} /> : null}
-      {hold ? <SandboxSettlement client={client} hold={hold} /> : null}
+      {hold ? <SandboxSettlement hold={hold} source={source} /> : null}
     </ScrollView>
   );
 }
@@ -434,6 +429,15 @@ const styles = StyleSheet.create({
   destination: { color: brand.fgMuted, fontSize: text.base },
   summary: { color: brand.fg, fontSize: text.sm, lineHeight: 21 },
   footnote: { color: brand.fgMuted, fontSize: text.xs },
+  demoNotice: {
+    backgroundColor: brand.warningSoft,
+    borderRadius: radius.sm,
+    color: brand.warning,
+    fontSize: text.sm,
+    fontWeight: '600',
+    lineHeight: 20,
+    padding: space[3],
+  },
   meta: { color: brand.fgMuted, fontSize: text.sm, lineHeight: 20 },
   panel: {
     backgroundColor: brand.bg,

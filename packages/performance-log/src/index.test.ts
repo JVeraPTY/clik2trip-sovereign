@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { createPerformanceRecord, summarizePerformance } from './index.js';
+import { createPerformanceRecord, percentile, summarizePerformance } from './index.js';
 
 function record(ttftMs: number, tokensPerSecond: number) {
   return createPerformanceRecord({
@@ -34,6 +34,15 @@ describe('performance evidence', () => {
       medianTtftMs: 200,
       p95TtftMs: 300,
       medianTokensPerSecond: 9,
+      p95TokensPerSecond: 10,
+      medianLoadMs: 100,
+      p95LoadMs: 100,
     });
+  });
+
+  it('uses the nearest-rank percentile and refuses invalid ranks', () => {
+    expect(percentile([4, 1, 3, 2], 0.5)).toBe(2);
+    expect(percentile([4, 1, 3, 2], 0.95)).toBe(4);
+    expect(() => percentile([1], 0)).toThrow('PERCENTILE_RANK_OUT_OF_RANGE');
   });
 });

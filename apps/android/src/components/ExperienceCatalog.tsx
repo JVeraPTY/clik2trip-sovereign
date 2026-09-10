@@ -39,9 +39,16 @@ export function ExperienceCard({
       ) : null}
       <View style={styles.body}>
         <Text style={styles.title}>{card.title}</Text>
-        {card.destinationName ? (
-          <Text style={styles.destination}>{card.destinationName}</Text>
-        ) : null}
+        <View style={styles.metaRow}>
+          {card.destinationName ? (
+            <Text style={styles.destination}>{card.destinationName}</Text>
+          ) : null}
+          {card.source === 'demo-seed' ? (
+            <View style={styles.demoPill}>
+              <Text style={styles.demoPillText}>DEMO</Text>
+            </View>
+          ) : null}
+        </View>
         {card.summary ? <Text style={styles.summary}>{card.summary}</Text> : null}
         {hasPrice || footnote || card.confirmationType ? (
           <>
@@ -116,6 +123,14 @@ const styles = StyleSheet.create({
   body: { gap: space[2], padding: space[4] },
   title: { color: brand.fg, fontSize: text.lg, fontWeight: '700' },
   destination: { color: brand.fgMuted, fontSize: text.sm },
+  metaRow: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
+  demoPill: {
+    backgroundColor: brand.warningSoft,
+    borderRadius: radius.pill,
+    paddingHorizontal: space[2],
+    paddingVertical: 2,
+  },
+  demoPillText: { color: brand.warning, fontSize: 10, fontWeight: '800', letterSpacing: 0.6 },
   summary: { color: brand.fg, fontSize: text.sm, lineHeight: 21 },
   divider: { backgroundColor: brand.border, height: 1, marginVertical: space[1] },
   priceRow: { alignItems: 'center', flexDirection: 'row', gap: space[3] },

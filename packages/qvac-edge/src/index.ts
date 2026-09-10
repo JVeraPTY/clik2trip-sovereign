@@ -17,6 +17,8 @@ import {
 } from './tourism';
 
 export * from './catalog-rag';
+export * from './demo-catalog';
+export * from './regions';
 export * from './tourism';
 
 export const visionPsyModel = {

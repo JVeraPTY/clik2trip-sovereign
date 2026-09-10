@@ -7,7 +7,14 @@ import {
   type VisionAnalysis,
 } from '@clik2trip/contracts';
 
-export const catalogSnapshotVersion = 'approved-seed-es-2026-09-09-v1';
+import { demoTourCatalog } from './demo-catalog';
+
+/**
+ * Bumped to v2 when the snapshot gained geography, provenance and the
+ * demonstration entries. The workspace name derives from this, so a device that
+ * ingested v1 re-ingests instead of searching a stale corpus.
+ */
+export const catalogSnapshotVersion = 'approved-seed-es-2026-09-10-v2';
 
 export const extractionPrompt = `Classify this tourism image. Fill every field from visible evidence only. Use short English values. For unknown destination use "", for unknown duration use 0. Do not infer price, availability, booking, identity, or safety.`;
 
@@ -41,6 +48,11 @@ const compactVisionAnalysisSchema = z.object({
   e: z.array(z.string()),
 });
 
+/**
+ * The approved Clik2Trip snapshot. These four mirror tours the Gateway can
+ * price, hold and book, so they carry no price of their own: the Gateway is the
+ * only source of a figure that may be charged.
+ */
 export const localTourCatalog: LocalTour[] = localTourSchema.array().parse([
   {
     tourRefId: 'tour-rafting-pacuare',
@@ -53,6 +65,9 @@ export const localTourCatalog: LocalTour[] = localTourSchema.array().parse([
     includes: ['Transporte desde San José', 'Guías certificados', 'Equipo de seguridad', 'Almuerzo'],
     excludes: ['Propinas', 'Fotos profesionales'],
     searchTerms: ['rafting', 'whitewater', 'river', 'rapids', 'adventure', 'selva', 'río', 'aventura'],
+    source: 'clik2trip',
+    regionId: 'costa-rica-caribe',
+    geo: { lat: 9.985, lng: -83.533 },
   },
   {
     tourRefId: 'tour-surf-tamarindo',
@@ -65,6 +80,9 @@ export const localTourCatalog: LocalTour[] = localTourSchema.array().parse([
     includes: ['Tabla de surf', 'Licra', 'Instructor certificado'],
     excludes: ['Transporte', 'Bloqueador solar'],
     searchTerms: ['surf', 'beach', 'ocean', 'waves', 'beginner', 'playa', 'mar', 'olas'],
+    source: 'clik2trip',
+    regionId: 'costa-rica-guanacaste',
+    geo: { lat: 10.299, lng: -85.84 },
   },
   {
     tourRefId: 'tour-volcan-arenal',
@@ -77,6 +95,9 @@ export const localTourCatalog: LocalTour[] = localTourSchema.array().parse([
     includes: ['Entrada al parque nacional', 'Guía naturalista', 'Agua'],
     excludes: ['Transporte', 'Almuerzo'],
     searchTerms: ['hiking', 'trail', 'volcano', 'nature', 'forest', 'senderismo', 'caminata', 'volcán'],
+    source: 'clik2trip',
+    regionId: 'costa-rica-norte',
+    geo: { lat: 10.463, lng: -84.703 },
   },
   {
     tourRefId: 'tour-termales-privados',
@@ -89,10 +110,38 @@ export const localTourCatalog: LocalTour[] = localTourSchema.array().parse([
     includes: ['Acceso a termales', 'Cena de tres tiempos', 'Toalla y casillero'],
     excludes: ['Bebidas alcohólicas', 'Transporte'],
     searchTerms: ['hot springs', 'wellness', 'relaxation', 'volcanic', 'termales', 'bienestar', 'cena'],
+    source: 'clik2trip',
+    regionId: 'costa-rica-norte',
+    geo: { lat: 10.47, lng: -84.64 },
   },
 ]);
 
-export const localTourDocuments = localTourCatalog.map((tour) => JSON.stringify(tour));
+/** Everything the device can retrieve locally, whatever region it resolves. */
+export const allLocalTours: LocalTour[] = [...localTourCatalog, ...demoTourCatalog];
+
+/**
+ * The entries worth ingesting for a traveler in these regions.
+ *
+ * The approved Clik2Trip snapshot is always included, whatever the location:
+ * those four are the only bookable ones, and letting the real payment path
+ * disappear because of where the phone is standing would make the demonstration
+ * worse, not more accurate. Demo entries are scoped to the resolved regions.
+ */
+export function toursForRegions(regionIds: readonly string[]): LocalTour[] {
+  const wanted = new Set(regionIds);
+  return [
+    ...localTourCatalog,
+    ...demoTourCatalog.filter((tour) => tour.regionId !== undefined && wanted.has(tour.regionId)),
+  ];
+}
+
+export function documentsForRegions(regionIds: readonly string[]): string[] {
+  return toursForRegions(regionIds).map((tour) => JSON.stringify(tour));
+}
+
+export function findLocalTour(tourRefId: string): LocalTour | null {
+  return allLocalTours.find((tour) => tour.tourRefId === tourRefId) ?? null;
+}
 
 function extractJsonObject(text: string): unknown | null {
   const start = text.indexOf('{');

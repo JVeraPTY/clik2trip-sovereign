@@ -2,7 +2,9 @@ import { createPerformanceRecord } from '@clik2trip/performance-log';
 import {
   buildTourismQuery,
   catalogEmbeddingModel,
+  findLocalTour,
   TourCatalogRagSession,
+  toursForRegions,
   VisionPsySession,
   visionPsyModel,
   visionPsyPrompt,
@@ -11,7 +13,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as Device from 'expo-device';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Network from 'expo-network';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Platform,
@@ -41,8 +43,12 @@ import {
 } from '../lib/onboarding';
 import { remainedOffline, type ConnectivitySnapshot } from '../lib/network-evidence';
 import { catalogCard, recommendationCard } from '../lib/experience-card';
+import { demoBookingSource, gatewayBookingSource } from '../lib/booking-source';
+import { regionNotice } from '../lib/device-region';
 import { useDemoWallet } from '../lib/use-demo-wallet';
+import { useDeviceRegion } from '../lib/use-device-region';
 import { useExperienceCatalog } from '../lib/use-experience-catalog';
+import { useGatewayClient } from '../lib/use-gateway-client';
 import { sepolia } from '@clik2trip/wdk-wallet/sepolia';
 import { brand, radius, space, text } from '../theme/brand';
 import { AppHeader } from './AppHeader';
@@ -50,6 +56,7 @@ import { ErrorNotice } from './ErrorNotice';
 import { ExperienceList } from './ExperienceCatalog';
 import { ExperienceDetail } from './ExperienceDetail';
 import { OnboardingFooter } from './OnboardingFooter';
+import { QualityEvaluationPanel } from './QualityEvaluationPanel';
 
 type PhotoPrivacyState = 'NO_PHOTO' | 'STORED_TEMPORARILY' | 'DELETED' | 'DELETE_FAILED';
 
@@ -97,16 +104,33 @@ export function CompatibilityGate() {
   const [analysisElapsedMs, setAnalysisElapsedMs] = useState(0);
   const [evidenceOpen, setEvidenceOpen] = useState(false);
   const [selectedTourRefId, setSelectedTourRefId] = useState<string | null>(null);
+  const gatewayClient = useGatewayClient();
   const {
     experiences: catalogExperiences,
     loading: catalogLoading,
     error: catalogError,
-  } = useExperienceCatalog();
+  } = useExperienceCatalog(gatewayClient);
+  const {
+    status: regionStatus,
+    resolution: region,
+    resolve: resolveDeviceRegion,
+  } = useDeviceRegion();
   const { status: walletStatus, open: openDemoWallet } = useDemoWallet();
   const [walletOpening, setWalletOpening] = useState(false);
   const [onboardingError, setOnboardingError] = useState<string | null>(null);
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
   const startedSteps = useRef<Set<OnboardingStepId>>(new Set());
+
+  const selectedSource = useMemo(() => {
+    if (selectedTourRefId === null) return null;
+    const local = findLocalTour(selectedTourRefId);
+    if (local?.source === 'demo-seed') return demoBookingSource(local);
+    const slug =
+      catalogExperiences.find((entry) => entry.tourRefId === selectedTourRefId)?.slug ??
+      local?.slug ??
+      null;
+    return slug === null ? null : gatewayBookingSource(gatewayClient, slug);
+  }, [catalogExperiences, gatewayClient, selectedTourRefId]);
 
   function modelStepStatus(state: InferenceState): OnboardingStepStatus {
     if (state === 'READY') return 'DONE';
@@ -128,7 +152,15 @@ export function CompatibilityGate() {
           ? 'RUNNING'
           : 'PENDING';
 
+  // Region comes first: the catalog step needs to know which snapshot to
+  // ingest, and resolving it costs a permission prompt, not a download.
   const onboardingSteps: OnboardingStep[] = [
+    {
+      id: 'region',
+      label: onboardingLabels.region,
+      technical: region ? `${region.region.name} · ${region.regionIds.length} zonas` : 'ubicación aproximada',
+      status: regionStatus === 'READY' ? 'DONE' : regionStatus === 'RESOLVING' ? 'RUNNING' : 'PENDING',
+    },
     {
       id: 'vision',
       label: onboardingLabels.vision,
@@ -151,7 +183,7 @@ export function CompatibilityGate() {
     },
   ];
 
-  // Runs the three preparations in order, once per app load. The ref guards
+  // Runs the four preparations in order, once per app load. The ref guards
   // against a second start while an async step has not yet moved its state.
   useEffect(() => {
     if (onboardingDismissed) return;
@@ -163,12 +195,16 @@ export function CompatibilityGate() {
       return;
     }
     startedSteps.current.add(next);
+    if (next === 'region') {
+      void resolveDeviceRegion();
+      return;
+    }
     if (next === 'vision') {
       void loadVisionPsy();
       return;
     }
     if (next === 'catalog') {
-      void loadLocalCatalog();
+      void loadLocalCatalog(region?.regionIds ?? []);
       return;
     }
     setWalletOpening(true);
@@ -240,12 +276,12 @@ export function CompatibilityGate() {
     }
   }
 
-  async function loadLocalCatalog() {
+  async function loadLocalCatalog(regionIds: readonly string[]) {
     setError(null);
     try {
       await catalogRag.load((progress) => {
         setRagDownloadPercent(Math.round(progress.percentage));
-      });
+      }, regionIds);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'QVAC_RAG_LOAD_FAILED');
     }
@@ -339,7 +375,14 @@ export function CompatibilityGate() {
     );
   }
 
-  const catalogCards = catalogExperiences.map(catalogCard);
+  // Two labelled groups rather than one run-on list. Running this on a phone in
+  // Panamá Oeste showed why: with the demonstration entries appended, twenty
+  // Costa Rica entries stood between the traveler and anything within reach of
+  // them, which is the opposite of what a location-aware list is for.
+  const demoCards = toursForRegions(region?.regionIds ?? [])
+    .filter((tour) => tour.source === 'demo-seed')
+    .map((tour) => recommendationCard(tour, catalogExperiences));
+  const catalogCards = [...demoCards, ...catalogExperiences.map(catalogCard)];
   const recommendationCards = recommendations.map(({ tour }) =>
     recommendationCard(tour, catalogExperiences),
   );
@@ -349,14 +392,10 @@ export function CompatibilityGate() {
       : ([...recommendationCards, ...catalogCards].find(
           (candidate) => candidate.tourRefId === selectedTourRefId,
         ) ?? null);
-  const selectedSlug =
-    recommendations.find(({ tour }) => tour.tourRefId === selectedTourRefId)?.tour.slug ??
-    catalogExperiences.find((entry) => entry.tourRefId === selectedTourRefId)?.slug ??
-    null;
   const visionBusy = ['DOWNLOADING', 'LOADING', 'RUNNING'].includes(inferenceState);
   const ragBusy = ['DOWNLOADING', 'LOADING', 'RUNNING'].includes(ragState);
   const busy = visionBusy || ragBusy;
-  if (selectedCard && selectedSlug) {
+  if (selectedCard && selectedSource) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <AppHeader
@@ -369,7 +408,7 @@ export function CompatibilityGate() {
         <ExperienceDetail
           card={selectedCard}
           onBack={() => setSelectedTourRefId(null)}
-          slug={selectedSlug}
+          source={selectedSource}
         />
       </SafeAreaView>
     );
@@ -422,9 +461,25 @@ export function CompatibilityGate() {
               </>
             ) : (
               <>
+                {demoCards.length > 0 ? (
+                  <>
+                    <Text style={styles.sectionTitle}>{regionNotice(region)}</Text>
+                    <Text style={styles.meta}>
+                      Muestra de demostración escrita para este repositorio. No procede del
+                      catálogo de Clik2Trip y no reserva cupo real.
+                    </Text>
+                    <ExperienceList cards={demoCards} onSelect={setSelectedTourRefId} />
+                  </>
+                ) : (
+                  <Text style={styles.meta}>{regionNotice(region)}</Text>
+                )}
+                <Text style={styles.sectionTitle}>Catálogo Clik2Trip</Text>
                 {catalogError ? <ErrorNotice code={catalogError} /> : null}
                 {catalogLoading ? <ActivityIndicator color={brand.primary} /> : null}
-                <ExperienceList cards={catalogCards} onSelect={setSelectedTourRefId} />
+                <ExperienceList
+                  cards={catalogExperiences.map(catalogCard)}
+                  onSelect={setSelectedTourRefId}
+                />
               </>
             )}
           </>
@@ -451,6 +506,12 @@ export function CompatibilityGate() {
             )}
           </View>
         ) : null}
+
+        <QualityEvaluationPanel
+          catalogRag={catalogRag}
+          ready={inferenceState === 'READY' && ragState === 'READY'}
+          vision={qvac}
+        />
 
         {error ? <ErrorNotice code={error} /> : null}
       </ScrollView>
@@ -516,6 +577,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   resultsTitle: { color: brand.fg, fontSize: text.xl, fontWeight: '700' },
+  sectionTitle: {
+    color: brand.fg,
+    fontSize: text.xl,
+    fontWeight: '800',
+    marginTop: space[2],
+  },
   evidenceHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
   evidenceToggle: { color: brand.primaryText, fontSize: text.sm, fontWeight: '700' },
   error: {

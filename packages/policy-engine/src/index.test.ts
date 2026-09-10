@@ -26,6 +26,9 @@ const checkout: WalletCheckout = {
   expiresAt: '2026-09-09T15:10:00.000Z',
   holdExpiresAt: '2026-09-09T15:12:00.000Z',
   statementHash,
+  bookingTotal: '75.50',
+  bookingCurrency: 'USD',
+  tariffMode: 'SANDBOX_NOMINAL',
 };
 
 const policy: DemoPolicy = {

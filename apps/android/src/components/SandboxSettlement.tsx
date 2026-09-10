@@ -1,7 +1,4 @@
-import {
-  type BookingHold,
-  Clik2TripGraphQlClient,
-} from '@clik2trip/cliktotrip-client';
+import type { BookingHold } from '@clik2trip/cliktotrip-client';
 import type { WalletCheckout } from '@clik2trip/contracts';
 import {
   evaluateTransfer,
@@ -17,7 +14,10 @@ import * as SecureStore from 'expo-secure-store';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { sandboxTariff } from '../config/sandbox-tariff';
+import type { BookingSource } from '../lib/booking-source';
 import { expoSha256 } from '../lib/expo-sha256';
+import { useConnectivity } from '../lib/use-connectivity';
 import { buildSandboxCheckout } from '../lib/sandbox-checkout';
 import { sandboxAttemptKey } from '../lib/secure-store-key';
 import { appendSettledTransaction, parseSettledLedger } from '../lib/settled-ledger';
@@ -77,12 +77,13 @@ function SettlementButton({
 }
 
 export function SandboxSettlement({
-  client,
   hold,
+  source,
 }: {
-  client: Clik2TripGraphQlClient;
   hold: BookingHold;
+  source: BookingSource;
 }) {
+  const connectivity = useConnectivity();
   const { state: walletState } = useWdkApp();
   const { exists: walletExists, open: openDemoWallet } = useDemoWallet();
   const payer = useAccount({ network: sepolia.network, accountIndex: 0 });
@@ -100,6 +101,9 @@ export function SandboxSettlement({
 
   const busy = ['PREPARING', 'AUTHENTICATING', 'SUBMITTING', 'VERIFYING'].includes(state);
   const attemptStorageKey = sandboxAttemptKey(hold.id);
+  // Only a definite OFFLINE stops the attempt. An unresolved state is left to
+  // try and fail with a real error, rather than refusing on a guess.
+  const offline = connectivity === 'OFFLINE';
 
   async function openWallet() {
     setError(null);
@@ -112,7 +116,7 @@ export function SandboxSettlement({
   }
 
   async function revalidateServerHold(expected: BookingHold) {
-    const current = await client.getBookingHold({ code: expected.code });
+    const current = await source.getBookingHold({ code: expected.code });
     if (!current || current.id !== expected.id || current.tourRefId !== expected.tourRefId) {
       throw new Error('HOLD_IDENTITY_MISMATCH');
     }
@@ -128,7 +132,7 @@ export function SandboxSettlement({
     if (!current.holdExpiresAt || Date.parse(current.holdExpiresAt) <= Date.now()) {
       throw new Error('CHECKOUT_EXPIRED');
     }
-    const availability = await client.getAvailability({
+    const availability = await source.getAvailability({
       tourRefId: current.tourRefId,
       from: current.date,
       to: current.date,
@@ -147,6 +151,10 @@ export function SandboxSettlement({
     setError(null);
     setState('PREPARING');
     try {
+      // Checked before anything else so the refusal names the actual problem.
+      // Without it the first chain read fails deep inside WDK and surfaces a
+      // bare resolver code, which is what a phone in airplane mode showed.
+      if (offline) throw new Error('PAGO_REQUIERE_CONEXION');
       const previousAttempt = await SecureStore.getItemAsync(attemptStorageKey);
       if (previousAttempt) throw new Error('TRANSFER_ALREADY_ATTEMPTED');
       const current = await revalidateServerHold(hold);
@@ -158,6 +166,7 @@ export function SandboxSettlement({
         recipient: merchant.address,
         holdExpiresAt: current.holdExpiresAt ?? '',
         nowMs: Date.now(),
+        tariff: sandboxTariff,
       }, expoSha256);
       // The balance is read before the fee is quoted. The paymaster charges the
       // fee in the same test token, so an unfunded account makes the bundler's
@@ -202,7 +211,7 @@ export function SandboxSettlement({
     setState('AUTHENTICATING');
     const authentication = await LocalAuthentication.authenticateAsync({
       promptMessage: 'Autorizar USD₮ de prueba',
-      promptSubtitle: `${formatBaseUnits(checkout.amountBaseUnits, sepolia.testUsdtDecimals)} USD₮ · Sepolia`,
+      promptSubtitle: `${formatBaseUnits(checkout.amountBaseUnits, sepolia.testUsdtDecimals)} USD₮ · Sepolia · reserva ${checkout.bookingCurrency} ${checkout.bookingTotal}`,
       cancelLabel: 'Cancelar',
       disableDeviceFallback: false,
     });
@@ -296,7 +305,11 @@ export function SandboxSettlement({
       <Text style={styles.title}>2. Autorización y recibo sandbox</Text>
       <Text style={styles.warning}>
         Solo USD₮ de prueba en Sepolia. Este sandbox no cambia el pago ni la reserva de Clik2Trip.
+        {source.bookable
+          ? ''
+          : ' La reserva de esta experiencia es una demostración local: no existe en Clik2Trip.'}
       </Text>
+      {sandboxTariff.configError ? <ErrorNotice code={sandboxTariff.configError} /> : null}
       <Text style={styles.status}>Wallet: {walletState.status}</Text>
       <Pressable
         accessibilityRole="button"
@@ -328,9 +341,17 @@ export function SandboxSettlement({
           onPress={() => void openWallet()}
         />
       ) : null}
+      {offline ? (
+        <Text style={styles.warning}>
+          Sin conexión. La liquidación lee el saldo, la comisión y el recibo desde Sepolia, así que
+          este paso necesita red. El análisis local y la recomendación no.
+        </Text>
+      ) : null}
       {walletState.status === 'READY' ? (
         <SettlementButton
-          disabled={busy || state === 'VERIFIED_SANDBOX_RECEIPT' || state === 'UNKNOWN'}
+          disabled={
+            busy || offline || state === 'VERIFIED_SANDBOX_RECEIPT' || state === 'UNKNOWN'
+          }
           label={state === 'PREPARING' ? 'Revalidando y cotizando…' : 'Preparar resumen final'}
           onPress={() => void prepareCheckout()}
         />
@@ -344,8 +365,19 @@ export function SandboxSettlement({
         <View style={styles.summary}>
           <Text style={styles.summaryTitle}>Resumen fijo para autorización</Text>
           <Text style={styles.status}>
-            Importe: {formatBaseUnits(checkout.amountBaseUnits, sepolia.testUsdtDecimals)} USD₮
+            Total de la reserva: {checkout.bookingCurrency} {checkout.bookingTotal}
           </Text>
+          <Text style={styles.status}>
+            Se transferirá: {formatBaseUnits(checkout.amountBaseUnits, sepolia.testUsdtDecimals)}{' '}
+            USD₮
+          </Text>
+          {checkout.tariffMode === 'SANDBOX_NOMINAL' ? (
+            <Text style={styles.tariff}>
+              Ese importe es un nominal de prueba de la red Sepolia, no el precio de la
+              experiencia. El total de la reserva queda congelado tal como se muestra, y el hash de
+              integridad cubre las dos cifras.
+            </Text>
+          ) : null}
           <Text style={styles.meta}>Red: Ethereum Sepolia · chainId {checkout.chainId}</Text>
           <Text style={styles.meta}>Token: {truncateHex(checkout.tokenContract)}</Text>
           <Text style={styles.meta}>Destino: {truncateHex(checkout.recipient)}</Text>
@@ -452,6 +484,14 @@ const styles = StyleSheet.create({
     padding: space[4],
   },
   summaryTitle: { color: brand.primaryText, fontSize: text.lg, fontWeight: '700' },
+  tariff: {
+    backgroundColor: brand.warningSoft,
+    borderRadius: radius.sm,
+    color: brand.warning,
+    fontSize: text.xs,
+    lineHeight: 17,
+    padding: space[3],
+  },
   verified: {
     backgroundColor: brand.successSoft,
     borderRadius: radius.md,

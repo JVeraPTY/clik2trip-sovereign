@@ -17,10 +17,9 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['wdk.config.js'],
+    files: ['wdk.config.js', 'apps/android/metro.config.js', 'tools/**/*.mjs'],
     languageOptions: {
       globals: globals.node,
-      sourceType: 'commonjs',
     },
   },
   {

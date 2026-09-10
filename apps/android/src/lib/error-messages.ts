@@ -29,6 +29,8 @@ const messages: Record<string, string> = {
   COMISION_EXCEDE_LIMITE: 'La comisión de red supera el límite del demo. Inténtalo más tarde.',
   TRANSFER_ALREADY_ATTEMPTED: 'Ya se intentó un pago para esta reserva. No se repetirá.',
   SANDBOX_CURRENCY_UNSUPPORTED: 'Esta moneda no se puede liquidar en el sandbox.',
+  TARIFA_SANDBOX_INVALIDA:
+    'La tarifa sandbox configurada no es válida. Se usa el nominal de prueba por defecto.',
   HOLD_ID_INVALID: 'La reserva no tiene un identificador utilizable.',
   WALLET_NOT_READY: 'Abre la wallet de prueba antes de preparar el pago.',
 
@@ -37,6 +39,16 @@ const messages: Record<string, string> = {
   HOLD_NOT_ACTIVE: 'La reserva ya no está activa.',
   HOLD_SNAPSHOT_MISMATCH: 'El precio o el cupo cambiaron en el servidor.',
   SIN_DISPONIBILIDAD: 'Ese horario ya no tiene cupo disponible.',
+  CATALOGO_LOCAL_DESACTUALIZADO: 'Esta experiencia cambió en el catálogo. Vuelve a abrirla.',
+  HOLD_EXPIRY_MISSING: 'La reserva llegó sin fecha de expiración. No se puede pagar.',
+  DATOS_CLIENTE_INVALIDOS: 'Revisa el nombre y el correo antes de continuar.',
+
+  // No network. The settlement is the one step that genuinely needs it: the
+  // balance, the fee quote and the verification are all read from the chain.
+  // Everything the app is actually about — the analysis and the local
+  // recommendation — keeps working without it, so the sentence says so.
+  PAGO_REQUIERE_CONEXION:
+    'La liquidación necesita conexión. El análisis y la recomendación local siguen funcionando sin red.',
 
   // WDK and bundler.
   WDK_BALANCE_FAILED: 'No se pudo leer el saldo de la wallet de prueba.',
@@ -53,6 +65,31 @@ const messages: Record<string, string> = {
 };
 
 const fallback = 'Algo no salió como esperábamos. El detalle técnico está abajo.';
+
+/**
+ * The resolver and socket failures that surface, verbatim and unexplained, when
+ * the device has no route to the network. A phone in airplane mode showed
+ * `EAI_NODATA` on the settlement screen with the generic fallback beside it,
+ * which told the traveler nothing about the one thing that was wrong.
+ */
+const networkFailureCodes = new Set([
+  'EAI_NODATA',
+  'EAI_NONAME',
+  'EAI_AGAIN',
+  'EAI_FAIL',
+  'ENOTFOUND',
+  'ENETUNREACH',
+  'ENETDOWN',
+  'EHOSTUNREACH',
+  'ECONNREFUSED',
+  'ECONNRESET',
+  'ETIMEDOUT',
+  'Network request failed',
+]);
+
+export function isNetworkFailure(code: string): boolean {
+  return networkFailureCodes.has(code);
+}
 
 export interface ReadableError {
   /** A sentence for the traveler. */
@@ -84,9 +121,14 @@ function extractCode(raw: string): string {
 
 export function toReadableError(raw: string): ReadableError {
   const code = extractCode(raw);
+  if (isNetworkFailure(code)) {
+    // The libc code is kept verbatim beside the sentence, the way every other
+    // code is: an evidence run must still record exactly what failed.
+    return { message: messages.PAGO_REQUIERE_CONEXION ?? fallback, code };
+  }
   return { message: messages[code] ?? fallback, code };
 }
 
 export function hasReadableMessage(code: string): boolean {
-  return code in messages;
+  return code in messages || isNetworkFailure(code);
 }
