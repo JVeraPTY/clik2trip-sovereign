@@ -2,6 +2,10 @@
 
 Clik2Trip Sovereign is an Android-first tourism assistant that interprets a travel image with VisionPsy on the phone, recommends compatible Clik2Trip experiences from a local catalog, and requires the traveler to review and authorize any test USD₮ transfer. The evaluated AI path does not call a cloud inference API.
 
+**Judges and reviewers: [`JUDGES.md`](JUDGES.md) has the APK download, install and testing instructions.**
+
+**[Watch the 2:30 final demo](https://github.com/JVeraPTY/clik2trip-sovereign/releases/download/v0.2.0-hackathon/clik2trip-sovereign-demo.mp4)** — no account or credentials required.
+
 The physical-device compatibility gate, Phase 2, and Phase 3 passed on 9 September 2026. A physical Android phone completed camera capture, JSON-Schema-constrained VisionPsy extraction, QVAC RAG, and approved-provider recommendations in airplane mode, followed by verified deletion of the temporary photo. It then revalidated catalog, price, capacity, and an exact slot through the Clik2Trip Gateway and created a 15-minute hold with a frozen price snapshot and no payment. Phase 4 passed on hardware on 10 September 2026: the traveler authorized a frozen summary with a device credential, the deterministic Policy Engine allowed it, WDK transferred 75.5 test USD₮ on Ethereum Sepolia, and the settlement was verified against an endpoint independent of the bundler.
 
 ## What is implemented
@@ -70,13 +74,16 @@ The offline snapshot includes authored sample experiences so the local recommend
 
 ## GitHub release
 
+The download and testing instructions written for judges and reviewers are in
+[`JUDGES.md`](JUDGES.md).
+
 Every push to `main` produces a standalone, debug-signed preview APK in the `Android preview` workflow. It runs without Metro or a development computer, but it is a workflow artifact: downloading one requires a signed-in GitHub account even on a public repository, and it is deleted after seven days. Artifacts are for the maintainers. Anyone else — a reviewer, a judge, a tester — should be given a GitHub Release instead, whose assets download without an account and do not expire.
 
 The release candidate is `v0.2.0-hackathon` (Android `versionCode` 2). Before a
 tag can publish, the workflow requires complete strict quality and performance
-reports plus an HTTPS demo URL in the repository variable `DEMO_VIDEO_URL`.
-The generated release manifest binds that URL to the exact tag, commit, APK
-digest, model, and evaluated hardware.
+reports and the versioned final demo. The generated release manifest binds the
+demo URL and digest to the exact tag, commit, APK digest, model, and evaluated
+hardware.
 
 Configure these repository secrets:
 
@@ -117,9 +124,9 @@ recommendation accuracy, a 43.7 s warm median TTFT, and 6.62 tokens/s warm
 median throughput. These deliberately unfiltered results are documented with
 their limitations and safety implications in `docs/phase-5-evaluation.md`.
 
-The demo recording plan is in `docs/demo-video.md`. The final link is not
-claimed until it has been tested from a signed-out browser and added as
-`DEMO_VIDEO_URL`.
+The demo recording plan and the final video digest are in
+`docs/demo-video.md`. The released MP4 is attached to the same public GitHub
+Release as the APK and is accessible without credentials.
 
 ## Pre-existing work declaration
 

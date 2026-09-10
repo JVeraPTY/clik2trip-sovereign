@@ -4,6 +4,18 @@ The submitted video must be public or unlisted, accessible without credentials,
 and shorter than five minutes. Record the exact APK, model, and hardware named
 in the release manifest.
 
+## Final artifact
+
+- Public release URL: <https://github.com/JVeraPTY/clik2trip-sovereign/releases/download/v0.2.0-hackathon/clik2trip-sovereign-demo.mp4>
+- Duration: 149.667 seconds
+- Resolution and codecs: 1920×1080, H.264 video, AAC audio
+- SHA-256: `fffca854608ef5189067f5e0a609d1494ead2dce65e26fdef86b4714a3f0a568`
+- Privacy review: the recording excludes the segment containing the maintainer's
+  full name and masks booking and wallet identifiers in the checkout and receipt.
+- Receipt evidence: 0.01 test USD₮ on Ethereum Sepolia, independently verified
+  with two confirmations; Payment `VERIFICADO` and Booking `NUEVA` are shown as
+  separate states.
+
 ## Timeline
 
 | Time | Demonstration | Evidence to keep visible |
@@ -25,5 +37,4 @@ in the release manifest.
   latency would exceed the recording budget.
 - Start from a funded test account and a future bookable slot.
 - Leave at least five seconds of margin under the five-minute limit.
-- Test the final link in a signed-out browser before setting the repository
-  variable `DEMO_VIDEO_URL`.
+- Test the final release link in a signed-out browser before submission.

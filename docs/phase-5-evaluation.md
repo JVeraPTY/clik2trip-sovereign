@@ -1,10 +1,11 @@
 # Phase 5 — measurements and public delivery
 
-Status: **in progress on 10 September 2026**. The reproducible dataset, device
-runner, scoring tools, performance aggregation, release gates, and demo runbook
-are implemented. The physical-device quality and performance gates pass. Phase
-5 passes only after the public video URL is set and a signed APK can be
-downloaded from a successful GitHub Release.
+Status: **release candidate complete on 10 September 2026**. The reproducible
+dataset, device runner, scoring tools, performance aggregation, release gates,
+final video, and judge guide are complete. The physical-device quality and
+performance gates pass. Publication is performed atomically by the
+`v0.2.0-hackathon` tag: the signed APK, video, checksums, manifest, and reports
+become public assets of the same GitHub Release.
 
 ## Implemented release gates
 
@@ -18,7 +19,7 @@ downloaded from a successful GitHub Release.
 | Domain-quality metrics | `tools/score-quality-evaluation.mjs --strict` |
 | No personal prompt or image in records | Schema and forbidden-field validation |
 | Signed downloadable APK and checksum | Tag-triggered `Android release` workflow |
-| Public demo video | Required `DEMO_VIDEO_URL` repository variable |
+| Public demo video | Versioned MP4 attached by the release workflow |
 | Version, commit, model, hardware alignment | Generated `release-manifest.json` asset |
 
 ## Physical hardware
@@ -66,13 +67,17 @@ median throughput is 6.618 tokens/s, and p95 throughput is 6.935 tokens/s. Two
 separate compatibility runs were captured in airplane mode; the 20-case quality
 batch itself recorded `offline: false`.
 
-## Remaining evidence
+## Delivery evidence
 
-- Record and publish the video under five minutes, then set `DEMO_VIDEO_URL`.
-- Correct `ANDROID_KEY_PASSWORD` in GitHub so it matches the private-key
-  password verified against the local PKCS12 keystore.
-- Push the final tag and verify that the APK downloads without authentication,
-  installs, and launches on the declared phone.
+- Final narrated video: 149.667 seconds, H.264/AAC, SHA-256
+  `fffca854608ef5189067f5e0a609d1494ead2dce65e26fdef86b4714a3f0a568`.
+- Final flow includes the sandbox receipt, two Sepolia confirmations, and the
+  independent Payment `VERIFICADO` / Booking `NUEVA` states.
+- The release workflow validates all four Android signing inputs, builds and
+  verifies the signed APK, and publishes the APK, video, digests, manifest, and
+  reports together.
+- [`JUDGES.md`](../JUDGES.md) provides the account-free download, installation,
+  reproducibility, limitations, and ten-minute test instructions.
 
 No placeholder is counted as a pass. The release workflow refuses to publish if
 any of these machine-checkable inputs is absent.

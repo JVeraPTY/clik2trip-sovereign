@@ -14,6 +14,9 @@ const quality = JSON.parse(
 const apkPath = resolve(repositoryRoot, 'clik2trip-sovereign.apk');
 const apk = await readFile(apkPath);
 const apkSha256 = createHash('sha256').update(apk).digest('hex');
+const videoPath = resolve(repositoryRoot, 'docs/assets/clik2trip-sovereign-demo.mp4');
+const video = await readFile(videoPath);
+const videoSha256 = createHash('sha256').update(video).digest('hex');
 const tag = process.env.RELEASE_TAG ?? '';
 const commit = process.env.RELEASE_COMMIT ?? '';
 const videoUrl = process.env.DEMO_VIDEO_URL ?? '';
@@ -61,6 +64,9 @@ const manifest = {
     performanceReport: 'performance-report.json',
     qualityReport: 'quality-report.json',
     videoUrl,
+    videoFile: 'clik2trip-sovereign-demo.mp4',
+    videoBytes: video.byteLength,
+    videoSha256,
   },
 };
 
@@ -80,7 +86,7 @@ await writeFile(
     `- APK SHA-256: \`${apkSha256}\`\n` +
     `- Evaluated hardware: ${performance.hardware.join('; ')}\n` +
     `- Model: ${performance.model.name} ${performance.model.quantization} with QVAC SDK ${performance.model.qvacSdkVersion}\n` +
-    `- [Demo video](${videoUrl})\n\n` +
+    `- [Demo video](${videoUrl}) (SHA-256: \`${videoSha256}\`)\n\n` +
     `Verify the APK with the attached \`clik2trip-sovereign.apk.sha256\` before installing. This release uses testnet assets only.\n`,
 );
 

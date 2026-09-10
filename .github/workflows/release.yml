@@ -11,7 +11,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     env:
-      DEMO_VIDEO_URL: ${{ vars.DEMO_VIDEO_URL }}
+      DEMO_VIDEO_URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clik2trip-sovereign-demo.mp4
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
@@ -110,6 +110,7 @@ jobs:
           node tools/build-release-metadata.mjs
           cp evaluation/performance-report.json performance-report.json
           cp evaluation/quality/quality-report.json quality-report.json
+          cp docs/assets/clik2trip-sovereign-demo.mp4 clik2trip-sovereign-demo.mp4
       - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64
         with:
           name: Clik2Trip Sovereign ${{ github.ref_name }}
@@ -118,6 +119,7 @@ jobs:
           files: |
             clik2trip-sovereign.apk
             clik2trip-sovereign.apk.sha256
+            clik2trip-sovereign-demo.mp4
             performance-report.json
             quality-report.json
             release-manifest.json
