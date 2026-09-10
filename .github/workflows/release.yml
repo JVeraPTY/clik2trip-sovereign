@@ -105,7 +105,12 @@ jobs:
           RELEASE_COMMIT: ${{ github.sha }}
         run: |
           cp apps/android/android/app/build/outputs/apk/release/app-release.apk clik2trip-sovereign.apk
-          apksigner verify --verbose clik2trip-sovereign.apk
+          apksigner="$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          if [ ! -x "$apksigner" ]; then
+            echo "::error::Expected apksigner at $apksigner after installing Build Tools 36.0.0."
+            exit 1
+          fi
+          "$apksigner" verify --verbose clik2trip-sovereign.apk
           node tools/build-release-metadata.mjs
           cp evaluation/performance-report.json performance-report.json
           cp evaluation/quality/quality-report.json quality-report.json
