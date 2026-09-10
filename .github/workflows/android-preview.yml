@@ -1,0 +1,42 @@
+name: Android preview
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - name: Install pinned Android toolchain
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;29.0.14206865"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm wdk:bundle
+      - run: pnpm android:prebuild
+      - name: Build standalone preview APK
+        working-directory: apps/android/android
+        env:
+          NODE_ENV: production
+        run: ./gradlew assembleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: clik2trip-sovereign-preview-apk
+          path: apps/android/android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 7

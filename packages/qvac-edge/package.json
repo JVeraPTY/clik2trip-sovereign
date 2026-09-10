@@ -1,0 +1,19 @@
+{
+  "name": "@clik2trip/qvac-edge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clik2trip/contracts": "workspace:*",
+    "@qvac/inference": "0.19.0",
+    "@qvac/sdk": "0.19.0",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

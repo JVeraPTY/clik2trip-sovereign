@@ -1,0 +1,29 @@
+packages:
+  - apps/*
+  - packages/*
+  - services/*
+
+# WDK's bare-pack traversal expects a conventional, npm-like node_modules tree.
+# The hoisted linker preserves nested version boundaries while remaining pnpm-managed.
+nodeLinker: hoisted
+
+patchedDependencies:
+  '@react-native/gradle-plugin@0.83.10': patches/@react-native__gradle-plugin@0.83.10.patch
+  'react-native-bare-kit@0.14.5': patches/react-native-bare-kit@0.14.5.patch
+
+allowBuilds:
+  esbuild: true
+
+minimumReleaseAgeExclude:
+  - '@tetherto/wdk-react-native-core@1.0.0-beta.19'
+  - '@tetherto/wdk-wallet-evm-erc-4337@1.0.0-beta.19'
+  - '@tetherto/wdk-worklet-bundler@1.0.0-beta.13'
+  - '@tetherto/wdk@1.0.0-beta.17'
+
+onlyBuiltDependencies:
+  - bare-buffer
+  - bare-fs
+  - bare-os
+  - bare-url
+  - esbuild
+  - react-native-nitro-modules

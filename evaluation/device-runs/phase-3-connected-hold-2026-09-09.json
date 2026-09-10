@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-10T02:56:00.000Z",
+  "flow": "connected-price-capacity-and-hold",
+  "device": {
+    "platform": "android",
+    "apiLevel": 36,
+    "architecture": "arm64-v8a"
+  },
+  "gateway": "https://www.clik2trip.com/graphql",
+  "catalogIdentityMatched": true,
+  "selectedTourRefId": "tour-surf-tamarindo",
+  "selectedDate": "2026-09-11",
+  "selectedTimeSlot": "08:00",
+  "participants": 1,
+  "livePrice": {
+    "currency": "USD",
+    "perPerson": "75.50"
+  },
+  "spotsLeftBeforeHold": 5,
+  "hold": {
+    "created": true,
+    "frozenTotal": "75.50",
+    "countdownObservedSeconds": 871,
+    "identifierRedacted": true
+  },
+  "paymentInitiated": false,
+  "bookingConfirmationInferred": false,
+  "releaseApkSha256": "cfd4359fb8ed22faa4a8ce8b9861a0044b12d897a0b33fd80b98174a804403f2"
+}

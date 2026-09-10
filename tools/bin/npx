@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -eu
+
+if [ "${1:-}" = "--no-install" ]; then
+  shift
+fi
+
+command_name="${1:-}"
+if [ -z "$command_name" ]; then
+  echo "usage: npx --no-install <workspace-command> [args...]" >&2
+  exit 64
+fi
+shift
+
+script_directory=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+repository_root=$(CDPATH= cd -- "$script_directory/../.." && pwd)
+command_path="$repository_root/node_modules/.bin/$command_name"
+
+if [ ! -x "$command_path" ]; then
+  echo "workspace command not found: $command_name" >&2
+  exit 127
+fi
+
+exec "$command_path" "$@"

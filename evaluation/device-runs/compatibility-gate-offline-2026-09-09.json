@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-10T01:27:26.303Z",
+  "deviceModel": "23117RA68G",
+  "androidVersion": "36",
+  "qvacSdkVersion": "0.19.0",
+  "modelName": "VisionPsy-Nano-460M-Flash",
+  "quantization": "Q4_K_M",
+  "modelBytes": 411925632,
+  "loadMs": 7363,
+  "promptHash": "c22e39a97cfddf7c81b0b47fefdc54dbebd8d98ba7351f84c435664c7a969409",
+  "promptCategory": "tourism-image-extraction-v1",
+  "promptTokens": 900,
+  "outputTokens": 124,
+  "ttftMs": 93224.683,
+  "totalMs": 114733,
+  "tokensPerSecond": 6.193978523778109,
+  "backendDevice": "gpu",
+  "success": true,
+  "errorCode": null,
+  "offline": true
+}

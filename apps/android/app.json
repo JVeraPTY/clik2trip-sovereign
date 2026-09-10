@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "Clik2Trip Sovereign",
+    "slug": "clik2trip-sovereign",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "android": {
+      "package": "com.clik2trip.sovereign",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FE6600"
+      }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 31,
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36,
+            "buildToolsVersion": "36.0.0",
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Clik2Trip Sovereign usa la c\u00e1mara solo para analizar la imagen localmente en este dispositivo.",
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": false
+        }
+      ],
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true
+        }
+      ],
+      "expo-local-authentication",
+      "@qvac/sdk/expo-plugin",
+      "./plugins/withSovereignAndroidSigning"
+    ],
+    "icon": "./assets/icon.png"
+  }
+}

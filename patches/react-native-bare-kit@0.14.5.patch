@@ -1,0 +1,20 @@
+diff --git a/android/build.gradle b/android/build.gradle
+index ac2af29..0ec5fa2 100644
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -14,11 +14,12 @@ apply plugin: "com.facebook.react"
+ 
+ android {
+   namespace "to.holepunch.bare.kit.react"
+-  compileSdk 34
++  ndkVersion rootProject.ext.ndkVersion
++  compileSdk rootProject.ext.compileSdkVersion
+ 
+   defaultConfig {
+-    minSdk 29
+-    targetSdk 34
++    minSdk rootProject.ext.minSdkVersion
++    targetSdk rootProject.ext.targetSdkVersion
+ 
+     externalNativeBuild {
+       cmake {

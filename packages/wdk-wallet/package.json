@@ -1,0 +1,19 @@
+{
+  "name": "@clik2trip/wdk-wallet",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./sepolia": "./src/sepolia.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tetherto/wdk-react-native-core": "1.0.0-beta.19"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

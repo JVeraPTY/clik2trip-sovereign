@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-10T05:56:00.000Z",
+  "flow": "authorized-sandbox-settlement",
+  "device": {
+    "platform": "android",
+    "apiLevel": 36,
+    "architecture": "arm64-v8a"
+  },
+  "network": {
+    "name": "ethereum-sepolia",
+    "chainId": "11155111"
+  },
+  "tokenContract": "0xd077a400968890eacc75cdc901f0356c943e4fdb",
+  "tokenDecimals": 6,
+  "participants": 1,
+  "frozenTotal": "75.50",
+  "frozenCurrency": "USD",
+  "amountBaseUnits": "75500000",
+  "estimatedFeeBaseUnits": "2587050",
+  "settledFeeBaseUnits": "1468652",
+  "maxFeeBaseUnits": "10000000",
+  "holdRevalidatedBeforeSummary": true,
+  "humanAuthorization": "device biometric or credential, taken after the frozen summary",
+  "policyDecision": "allowed",
+  "userOperationSubmitted": true,
+  "transactionHash": "0x88eb3c83de6e275a85edb30147307f35a7b4f00d0de4fa5d02b02317ddd8820b",
+  "blockNumber": 11673005,
+  "settlementStatus": "success",
+  "confirmationsAtVerification": 2,
+  "requiredConfirmations": 2,
+  "verificationRpcIndependentOfBundler": true,
+  "independentReVerification": {
+    "performedFrom": "workstation, public Sepolia JSON-RPC",
+    "chainIdMatched": true,
+    "senderMatched": true,
+    "recipientMatched": true,
+    "amountBaseUnitsMatched": "75500000",
+    "confirmationsObserved": 12
+  },
+  "bookingStatusAfterSettlement": "NUEVA",
+  "bookingStatusObservedLater": "EXPIRADA",
+  "settlementUnchangedAfterBookingLeftHold": true,
+  "refundOrReconciliationPathImplemented": false,
+  "paymentAndBookingStatusesIndependent": true,
+  "logPrivacyAudit": {
+    "logcatLinesInspected": 16976,
+    "fullWalletAddressOccurrences": 0,
+    "seedOrPrivateKeyOccurrences": 0,
+    "capturedImagePathOccurrences": 0
+  },
+  "bookingIdentifierRedacted": true,
+  "walletAddressesRedacted": true,
+  "releaseApkSha256": "8cd1dd80531a0125096092abcb8810fdce137b3fc60ddb7fa846685de83ac72c"
+}
