@@ -90,10 +90,10 @@ Configure these repository secrets:
 - `ANDROID_KEYSTORE_BASE64`
 - `ANDROID_KEY_ALIAS`
 - `ANDROID_KEYSTORE_PASSWORD`
-- `ANDROID_KEY_PASSWORD`
 
-The release workflow validates the keystore, alias, store password, and private
-key password before the Android build. It then verifies the APK signature,
+The PKCS12 keystore uses `ANDROID_KEYSTORE_PASSWORD` for both the store and its
+private-key entry. The release workflow validates the keystore, alias, and
+password before the Android build. It then verifies the APK signature,
 calculates SHA-256, and attaches the APK, checksum, performance report, quality
 report, and release manifest to a public GitHub Release. The workflow refuses
 to publish placeholders or partial evidence.

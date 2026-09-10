@@ -73,9 +73,9 @@ batch itself recorded `offline: false`.
   `fffca854608ef5189067f5e0a609d1494ead2dce65e26fdef86b4714a3f0a568`.
 - Final flow includes the sandbox receipt, two Sepolia confirmations, and the
   independent Payment `VERIFICADO` / Booking `NUEVA` states.
-- The release workflow validates all four Android signing inputs, builds and
-  verifies the signed APK, and publishes the APK, video, digests, manifest, and
-  reports together.
+- The release workflow validates the PKCS12 keystore, alias, and shared
+  store/private-key password, builds and verifies the signed APK, and publishes
+  the APK, video, digests, manifest, and reports together.
 - [`JUDGES.md`](../JUDGES.md) provides the account-free download, installation,
   reproducibility, limitations, and ten-minute test instructions.
 

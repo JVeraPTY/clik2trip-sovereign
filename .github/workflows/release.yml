@@ -41,7 +41,6 @@ jobs:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           set -euo pipefail
           keystore=apps/android/android/app/sovereign-upload.jks
@@ -83,14 +82,14 @@ jobs:
           if ! jarsigner \
               -keystore "$keystore" \
               -storepass "$ANDROID_KEYSTORE_PASSWORD" \
-              -keypass "$ANDROID_KEY_PASSWORD" \
+              -keypass "$ANDROID_KEYSTORE_PASSWORD" \
               "$verification_dir/unsigned.jar" \
               "$ANDROID_KEY_ALIAS" > /dev/null 2>&1; then
-            echo "::error::The alias exists but its private key would not open. Check ANDROID_KEY_PASSWORD."
+            echo "::error::The alias exists but its private key would not open. Check ANDROID_KEYSTORE_PASSWORD."
             exit 1
           fi
 
-          echo "Keystore, alias, store password, and key password validated."
+          echo "Keystore, alias, and shared store/key password validated."
       - name: Build signed APK
         working-directory: apps/android/android
         env:
@@ -98,7 +97,7 @@ jobs:
           SOVEREIGN_UPLOAD_STORE_FILE: sovereign-upload.jks
           SOVEREIGN_UPLOAD_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           SOVEREIGN_UPLOAD_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          SOVEREIGN_UPLOAD_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          SOVEREIGN_UPLOAD_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: ./gradlew assembleRelease
       - name: Prepare release assets
         env:
