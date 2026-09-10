@@ -1,139 +1,302 @@
 # Clik2Trip Sovereign
 
-Clik2Trip Sovereign is an Android-first tourism assistant that interprets a travel image with VisionPsy on the phone, recommends compatible Clik2Trip experiences from a local catalog, and requires the traveler to review and authorize any test USD₮ transfer. The evaluated AI path does not call a cloud inference API.
+> Inteligencia turística privada en el teléfono: fotografía un lugar, recibe
+> recomendaciones locales y autoriza pagos de prueba en USD₮ sin entregar a un
+> modelo en la nube tu imagen, tus preferencias ni tu capacidad de firma.
 
-**Judges and reviewers: [`JUDGES.md`](JUDGES.md) has the APK download, install and testing instructions.**
+[![CI](https://github.com/JVeraPTY/clik2trip-sovereign/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/JVeraPTY/clik2trip-sovereign/actions/workflows/ci.yml)
+[![Android preview](https://github.com/JVeraPTY/clik2trip-sovereign/actions/workflows/android-preview.yml/badge.svg?branch=main)](https://github.com/JVeraPTY/clik2trip-sovereign/actions/workflows/android-preview.yml)
+[![Licencia MIT](https://img.shields.io/badge/licencia-MIT-2ea44f.svg)](LICENSE)
 
-**[Watch the 2:30 final demo](https://github.com/JVeraPTY/clik2trip-sovereign/releases/download/v0.2.0-hackathon/clik2trip-sovereign-demo.mp4)** — no account or credentials required.
+## Entrega del hackathon
 
-The physical-device compatibility gate, Phase 2, and Phase 3 passed on 9 September 2026. A physical Android phone completed camera capture, JSON-Schema-constrained VisionPsy extraction, QVAC RAG, and approved-provider recommendations in airplane mode, followed by verified deletion of the temporary photo. It then revalidated catalog, price, capacity, and an exact slot through the Clik2Trip Gateway and created a 15-minute hold with a frozen price snapshot and no payment. Phase 4 passed on hardware on 10 September 2026: the traveler authorized a frozen summary with a device credential, the deterministic Policy Engine allowed it, WDK transferred 75.5 test USD₮ on Ethereum Sepolia, and the settlement was verified against an endpoint independent of the bundler.
+| Recurso | Enlace |
+| --- | --- |
+| Video final, 2:30 | **[Ver demostración](https://github.com/JVeraPTY/clik2trip-sovereign/releases/download/v0.2.0-hackathon/clik2trip-sovereign-demo.mp4)** |
+| Aplicación Android | **[Descargar APK firmado](https://github.com/JVeraPTY/clik2trip-sovereign/releases/download/v0.2.0-hackathon/clik2trip-sovereign.apk)** |
+| Entrega completa | [GitHub Release `v0.2.0-hackathon`](https://github.com/JVeraPTY/clik2trip-sovereign/releases/tag/v0.2.0-hackathon) |
+| Guía de evaluación | [Instalación y prueba para jueces](JUDGES.md) |
+| Evidencia técnica | [Resultados de la Fase 5](docs/phase-5-evaluation.md) |
 
-## What is implemented
+La release corresponde al commit `c6510ec`, Android `versionCode` 2 y paquete
+`com.clik2trip.sovereign`. El APK, su checksum, el video, el manifiesto y los
+informes de calidad y rendimiento se descargan sin una cuenta de GitHub.
 
-- Expo 55 and React Native 0.83 Android scaffold with minimum Android 12.
-- QVAC SDK 0.19.0 integration using VisionPsy Nano 460M Flash Q4 K M and its matching Q8 projection model.
-- WDK React Native provider configured for Ethereum Sepolia only.
-- Camera-driven compatibility screen for local multimodal inference.
-- QVAC RAG with EmbeddingGemma 300M Q4 and a versioned offline catalog snapshot: the four approved Clik2Trip tours, plus 52 authored demonstration experiences across nine regions of Panama, ingested for the region the phone resolves to at start-up.
-- Coarse device-region resolution at start-up, used only to choose which snapshot to ingest. See `docs/demo-catalog.md`.
-- Conservative on-device network observation for reproducible online/offline performance evidence.
-- Deterministic checkout Policy Engine with denial codes and tests.
-- Human-authorized test USD₮ transfer on Ethereum Sepolia through WDK, gated by a re-read of the server hold and a biometric or PIN confirmation of the frozen summary.
-- A configurable sandbox tariff, so a faucet balance funds many settlement runs rather than one. The paymaster still charges gas in the same test token, so the fee, not the amount, is what bounds a balance. The traveler always sees and authorizes both the frozen booking total and the test amount actually transferred, and the statement hash covers both.
-- Independent settlement verification that resolves the ERC-4337 UserOperation through the bundler and then re-reads the receipt, the ERC-20 transfer logs, and the confirmation depth from a separate Sepolia JSON-RPC endpoint.
-- Privacy-safe performance record schema and aggregation utilities.
-- A frozen, attributed 20-image quality dataset plus an on-device batch runner
-  and deterministic scorer.
-- Typed GraphQL client boundary for the existing Clik2Trip Gateway.
-- GitHub Actions for checks, Android preview builds, and signed GitHub Releases.
+## La propuesta
 
-## Prerequisites
+En turismo, una conexión inestable puede interrumpir la búsqueda justo cuando
+el viajero más la necesita. Enviar fotografías a un servicio remoto también
+crea un problema de privacidad, y delegar en un modelo probabilístico una
+reserva o un pago sería un riesgo innecesario.
 
-- Node.js 24 and pnpm 11.19.0.
+Clik2Trip Sovereign separa esas responsabilidades:
+
+1. **VisionPsy interpreta la fotografía en el dispositivo.** La imagen vive
+   temporalmente en el almacenamiento privado de la aplicación y se elimina al
+   terminar el análisis.
+2. **QVAC RAG consulta un catálogo local.** La recomendación puede terminar en
+   modo avión después de descargar los modelos una sola vez.
+3. **El comercio se revalida de forma determinista.** Para un tour real, la app
+   consulta por HTTPS la identidad del catálogo, el precio, el cupo y un horario
+   exacto antes de crear un hold de 15 minutos.
+4. **La IA nunca autoriza el pago.** El viajero revisa un resumen inmutable y lo
+   aprueba con la credencial del dispositivo.
+5. **WDK ejecuta una transferencia de prueba.** El build del hackathon está
+   limitado a USD₮ de prueba en Ethereum Sepolia.
+6. **Una fuente independiente verifica el resultado.** La aplicación resuelve
+   la UserOperation y vuelve a leer el recibo, los logs ERC-20 y las
+   confirmaciones desde un RPC diferente del bundler.
+
+El resultado es un flujo completo —descubrimiento, recomendación, reserva,
+autorización y recibo— donde la IA aporta contexto sin convertirse en autoridad.
+
+## Cumplimiento de los retos
+
+| Requisito | Evidencia en este proyecto |
+| --- | --- |
+| Inferencia con QVAC | Toda la inferencia evaluada y el RAG usan `@qvac/sdk` 0.19.0 |
+| Modelo Psy central | VisionPsy Nano 460M analiza la imagen que inicia el flujo principal |
+| Ejecución *edge* | Inferencia y recuperación local probadas en un teléfono Android arm64 físico |
+| Sin inferencia remota | No existe endpoint ni fallback de IA en la nube |
+| Experiencia útil sin red | Con los modelos en caché, análisis y recomendación funcionan en modo avión |
+| Flujo de usuario completo | Foto → recomendación → hold → autorización → USD₮ de prueba → recibo |
+| Evidencia reproducible | Dataset congelado, registros estructurados, métricas, checksums y APK firmado |
+| Código abierto | Licencia permisiva MIT |
+
+Pears no forma parte de esta versión. La comunicación entre pares es un criterio
+adicional del reto general, no un requisito para la experiencia local presentada.
+
+## Arquitectura
+
+```mermaid
+flowchart LR
+  subgraph Phone[Teléfono Android]
+    Camera[Cámara] --> Vision[VisionPsy 460M<br/>QVAC SDK]
+    Vision --> Rag[RAG local<br/>EmbeddingGemma 300M]
+    Rag --> Suggest[Recomendación]
+    Suggest --> Review[Resumen inmutable]
+    Review --> Policy[Policy Engine]
+    Policy --> Auth[Biometría o PIN]
+    Auth --> Wdk[WDK wallet]
+  end
+
+  Suggest -->|solo catálogo, precio y cupo| Gateway[Clik2Trip GraphQL]
+  Wdk -->|testnet| Sepolia[Ethereum Sepolia]
+  Sepolia --> Verify[RPC independiente]
+  Verify --> Receipt[Recibo sandbox verificado]
+```
+
+La frontera es intencional: ninguna imagen, salida del modelo, perfil local,
+semilla o capacidad de firma se envía al Gateway. La red se usa únicamente para
+funciones no relacionadas con la inferencia: revalidación comercial y liquidación
+de prueba.
+
+### Componentes del monorepo
+
+| Ruta | Responsabilidad |
+| --- | --- |
+| `apps/android` | Aplicación Expo 55 / React Native 0.83 para Android |
+| `packages/qvac-edge` | Sesión VisionPsy, extracción estructurada y RAG local |
+| `packages/contracts` | Contratos y validación de datos compartidos |
+| `packages/cliktotrip-client` | Frontera GraphQL tipada con la plataforma existente |
+| `packages/policy-engine` | Decisiones deterministas y códigos estables de rechazo |
+| `packages/wdk-wallet` | Wallet WDK, resumen firmado y transferencia en Sepolia |
+| `packages/performance-log` | Registros de modelo, tokens, TTFT y throughput |
+| `services/usdt-verifier` | Verificación independiente del recibo sandbox |
+| `evaluation` | Casos congelados, resultados físicos e informes agregados |
+
+## Modelos y hardware evaluado
+
+| Campo | Valor |
+| --- | --- |
+| Dispositivo | Xiaomi 23117RA68G |
+| Sistema | Android 16, API 36, arm64-v8a |
+| SDK | QVAC SDK 0.19.0 |
+| Visión | VisionPsy Nano 460M Flash `Q4_K_M` |
+| Proyección multimodal | VisionPsy Nano 460M Flash `Q8_0` |
+| Embeddings | EmbeddingGemma 300M `Q4_0` |
+| Backend medido | GPU |
+| Activos de modelo | Aproximadamente 412 MB en la primera descarga |
+
+QVAC no admite el emulador como evidencia de aceptación de este proyecto. Las
+mediciones publicadas provienen de hardware físico declarado.
+
+## Resultados reproducibles
+
+La evaluación congeló 20 imágenes con página fuente, autor, licencia, tamaño y
+SHA-256 antes de ejecutar el modelo. Las 20 filas son válidas; 18 inferencias
+terminaron y dos fallaron. Los fallos permanecen en el denominador y puntúan
+cero: no se filtraron para mejorar los resultados.
+
+| Métrica | Resultado |
+| --- | ---: |
+| Exactitud de categoría | 25 % |
+| Exactitud de recomendación Top-3 | 30 % |
+| Exactitud de duración | 70 % |
+| Recall de restricciones | 90 % |
+| Explicaciones fundamentadas | 35 % |
+| Brier score de confianza | 0.278 |
+| TTFT mediano en caliente | 43.7 s |
+| TTFT p95 en caliente | 92.3 s |
+| Throughput mediano | 6.62 tokens/s |
+| Throughput p95 | 6.94 tokens/s |
+
+Estas cifras muestran tanto la viabilidad como el límite del modelo nano. Su
+calidad no es suficiente para decidir una reserva o un pago; por eso el
+filtrado, la revalidación, la política y la autorización humana son barreras
+deterministas separadas. El detalle completo está en
+[`docs/phase-5-evaluation.md`](docs/phase-5-evaluation.md).
+
+## Instalar el APK
+
+Requisitos del teléfono:
+
+- Android 12 o posterior (`minSdkVersion` 31).
+- Arquitectura arm64.
+- Aproximadamente 1.5 GB libres para la app y los modelos.
+- Wi-Fi y cargador durante el primer inicio.
+- Bloqueo de pantalla activo si se probará la autorización del pago.
+
+Descarga `clik2trip-sovereign.apk` y
+`clik2trip-sovereign.apk.sha256` desde la
+[release pública](https://github.com/JVeraPTY/clik2trip-sovereign/releases/tag/v0.2.0-hackathon).
+Verifica el archivo antes de instalarlo:
+
+```bash
+shasum -a 256 -c clik2trip-sovereign.apk.sha256
+adb install -r clik2trip-sovereign.apk
+```
+
+Si Android responde `INSTALL_FAILED_UPDATE_INCOMPATIBLE`, hay una versión de
+previsualización firmada con otro certificado. Desinstalarla elimina también la
+wallet local, por lo que debes guardar antes cualquier evidencia que necesites:
+
+```bash
+adb uninstall com.clik2trip.sovereign
+adb install clik2trip-sovereign.apk
+```
+
+La [guía para jueces](JUDGES.md) explica el primer inicio, la prueba sin red y el
+flujo opcional de USD₮ paso a paso.
+
+## Desarrollo local
+
+### Requisitos
+
+- Node.js 24 y pnpm 11.19.0.
 - Java 17.
-- Android SDK 36 with platform tools and an arm64 physical device running Android 12 or later.
-- USB debugging enabled. QVAC does not support the emulator as acceptance evidence.
+- Android SDK 36, Build Tools 36.0.0 y NDK 29.0.14206865.
+- Teléfono Android arm64 con depuración USB habilitada.
 
-## Local setup
+### Preparación y ejecución
 
 ```bash
 pnpm install
 cp apps/android/.env.example apps/android/.env
 pnpm wdk:bundle
 pnpm check
-pnpm evaluation:quality
-pnpm evaluation:report
 pnpm android:prebuild
 pnpm android:device
 ```
 
-`pnpm android:prebuild` is required after pulling the demonstration catalog change: the Android manifest gains `ACCESS_COARSE_LOCATION` and drops `ACCESS_FINE_LOCATION`, and an older build has neither.
+El primer inicio descarga y carga los modelos fijados. Mantén el teléfono
+conectado a una red estable y a la corriente durante ese paso. Una vez en caché,
+la inferencia se ejecuta localmente.
 
-The first QVAC run downloads approximately 412 MB of pinned model assets. Keep the phone connected to power and use a stable network for this one-time download. Once loaded, inference runs on the device.
+`pnpm android:prebuild` regenera el proyecto nativo, configura los complementos
+de QVAC y WDK, habilita ubicación aproximada y bloquea ubicación precisa.
 
-## Compatibility gate
-
-1. Connect a physical Android arm64 device and confirm it is visible with `adb devices`.
-2. Build and install the development client with `pnpm android:device`.
-3. Create or unlock the test wallet without exposing its seed.
-4. Capture a tourism image and load VisionPsy.
-5. Run the local analysis, then enable airplane mode and repeat with the cached model.
-6. Record the device, Android version, model load, TTFT, throughput, and outcome in `docs/compatibility-gate.md`.
-
-## Testnet configuration
-
-Only Ethereum Sepolia is enabled. Defaults use the public endpoints and test token documented by WDK. Override them in `apps/android/.env` when rate limits require dedicated endpoints. Never put private credentials in `EXPO_PUBLIC_*` values because those values are embedded in the APK.
-
-`EXPO_PUBLIC_SANDBOX_TARIFF_USDT` sets how much test USD₮ one settlement moves: a decimal amount, or `full` to transfer the frozen booking total as the Phase 4 evidence run recorded. It defaults to `0.01`. The nominal is a testnet artefact and is never presented as the price of an experience.
-
-## Demonstration catalog
-
-The offline snapshot includes authored sample experiences so the local recommendation path has enough material where the connected Clik2Trip catalog is still small. This data was written for this repository: no booking platform was crawled, no third-party text, image or price was copied, and no real operator is named. Every such entry is marked `demo-seed`, shows a `DEMO` marker on screen, and settles through a demonstration path that never contacts the Clik2Trip Gateway and never creates a booking.
-
-`docs/demo-catalog.md` covers the provenance, the location handling and the tariff in full.
-
-## GitHub release
-
-The download and testing instructions written for judges and reviewers are in
-[`JUDGES.md`](JUDGES.md).
-
-Every push to `main` produces a standalone, debug-signed preview APK in the `Android preview` workflow. It runs without Metro or a development computer, but it is a workflow artifact: downloading one requires a signed-in GitHub account even on a public repository, and it is deleted after seven days. Artifacts are for the maintainers. Anyone else — a reviewer, a judge, a tester — should be given a GitHub Release instead, whose assets download without an account and do not expire.
-
-The release candidate is `v0.2.0-hackathon` (Android `versionCode` 2). Before a
-tag can publish, the workflow requires complete strict quality and performance
-reports and the versioned final demo. The generated release manifest binds the
-demo URL and digest to the exact tag, commit, APK digest, model, and evaluated
-hardware.
-
-Configure these repository secrets:
-
-- `ANDROID_KEYSTORE_BASE64`
-- `ANDROID_KEY_ALIAS`
-- `ANDROID_KEYSTORE_PASSWORD`
-
-The PKCS12 keystore uses `ANDROID_KEYSTORE_PASSWORD` for both the store and its
-private-key entry. The release workflow validates the keystore, alias, and
-password before the Android build. It then verifies the APK signature,
-calculates SHA-256, and attaches the APK, checksum, performance report, quality
-report, and release manifest to a public GitHub Release. The workflow refuses
-to publish placeholders or partial evidence.
-
-## Evaluation
-
-The committed evaluation set contains 20 visually inspected Wikimedia Commons
-images with their source pages, creators, licenses, byte counts, SHA-256
-digests, and expected labels frozen before inference. The in-app evaluation lab
-runs all cases through VisionPsy and the local QVAC RAG on the phone, then
-exports privacy-safe JSONL. See `evaluation/quality/README.md` and
-`docs/phase-5-evaluation.md`.
-
-For a release-ready evidence check, run:
+### Verificaciones
 
 ```bash
+pnpm check
 pnpm evaluation:quality:strict
 pnpm evaluation:report:strict
 ```
 
-The first command requires exactly one result for every frozen case. The second
-requires at least one cold and five warm successful measurements and reports
-median and p95 TTFT, throughput, and model-load time.
+`pnpm check` ejecuta lint, typecheck y 150 pruebas. Los comandos estrictos exigen
+los 20 casos de calidad y al menos una medición fría más cinco mediciones
+calientes correctas.
 
-The 10 September physical-device batch contains 20/20 valid rows and 18
-successful inferences. It measured 25% category accuracy, 30% Top-3
-recommendation accuracy, a 43.7 s warm median TTFT, and 6.62 tokens/s warm
-median throughput. These deliberately unfiltered results are documented with
-their limitations and safety implications in `docs/phase-5-evaluation.md`.
+## Configuración y servicios remotos declarados
 
-The demo recording plan and the final video digest are in
-`docs/demo-video.md`. The released MP4 is attached to the same public GitHub
-Release as the APK and is accessible without credentials.
+Los valores públicos de desarrollo están documentados en
+[`apps/android/.env.example`](apps/android/.env.example):
 
-## Pre-existing work declaration
+- `https://www.clik2trip.com/graphql`: catálogo, disponibilidad y hold; nunca IA.
+- RPC público de Ethereum Sepolia: verificación independiente.
+- Bundler y paymaster públicos de Candide: UserOperation ERC-4337 de prueba.
+- Contrato USD₮ de prueba: `0xd077a400968890eacc75cdc901f0356c943e4fdb`.
 
-Clik2Trip's brand, website, catalog, GraphQL Gateway, Search Service, Booking Service, Payments Service, infrastructure, and all code in the original ClikToTrip repository predate this hackathon submission. They are external platform dependencies and are not represented as new work here. See `docs/preexisting-work.md` for the full boundary.
+`EXPO_PUBLIC_SANDBOX_TARIFF_USDT` controla el nominal de prueba transferido. El
+valor predeterminado es `0.01`; `full` usa el total congelado de la reserva. La
+pantalla siempre diferencia el precio de la experiencia del importe testnet.
 
-Everything in this repository begins on 9 September 2026 unless a file explicitly identifies an upstream source. The architecture and business documents dated 8 August 2026 are also pre-existing and were replaced by RFC 002 before implementation.
+Nunca guardes secretos en variables `EXPO_PUBLIC_*`: Expo las incorpora al APK.
+Las credenciales de firma Android viven únicamente en GitHub Actions Secrets.
 
-## Safety
+## Privacidad y seguridad
 
-This is hackathon software. It uses testnet funds only and is not a production wallet, travel agency, investment service, or autonomous payment agent. A model result is a recommendation, not an authorization.
+- La foto se conserva solo durante el análisis y su eliminación se comprueba
+  mediante una nueva lectura del almacenamiento.
+- Los registros no incluyen imágenes, prompts completos, semillas, claves
+  privadas ni direcciones completas.
+- El modelo no puede acceder a la seed, la clave privada, la operación de firma
+  ni el método de transferencia.
+- El Policy Engine fija red, token, destinatario, importes, hash, expiraciones y
+  límite de demostración antes de invocar WDK.
+- El build solo permite Ethereum Sepolia; no existe ruta a mainnet.
+- El estado del pago sandbox y el estado de la reserva permanecen separados.
+
+Consulta [`docs/security.md`](docs/security.md) para el modelo de amenazas y los
+límites de confianza.
+
+## Catálogo de demostración
+
+El snapshot local contiene cuatro tours del catálogo preexistente de Clik2Trip y
+52 experiencias de demostración escritas para este repositorio, distribuidas en
+nueve regiones de Panamá. No se rastreó ninguna plataforma, no se copiaron
+textos, imágenes ni precios de terceros y no se nombran operadores reales.
+
+Las experiencias sintéticas muestran una etiqueta `DEMO` y nunca crean una
+reserva en el Gateway. La procedencia completa está en
+[`docs/demo-catalog.md`](docs/demo-catalog.md).
+
+## Trabajo preexistente
+
+La marca, el sitio web, el catálogo, el Gateway GraphQL, los servicios Search,
+Booking, Payments y Notification, y la infraestructura original de Clik2Trip
+existían antes del hackathon. Son dependencias externas de esta propuesta y no
+se presentan como trabajo nuevo.
+
+El trabajo del hackathon comienza con el
+[primer commit de este repositorio](https://github.com/JVeraPTY/clik2trip-sovereign/commit/e5679bfe37bf2240e889d81d49dbefb4c46aa9fd):
+la aplicación Android, la integración QVAC/VisionPsy, el RAG local, el cliente
+móvil, el Policy Engine, WDK, la experiencia testnet, la verificación, las
+métricas, el dataset y los materiales de entrega. La frontera detallada y
+archivo por archivo está declarada en
+[`docs/preexisting-work.md`](docs/preexisting-work.md).
+
+## Documentación
+
+- [ADR de compatibilidad y baseline](docs/ADR-001-compatibility-baseline.md)
+- [Evidencia del dispositivo físico](docs/compatibility-gate.md)
+- [Evaluación de la Fase 2](docs/phase-2-evaluation.md)
+- [Evaluación de la Fase 3](docs/phase-3-evaluation.md)
+- [Evaluación de la Fase 4](docs/phase-4-evaluation.md)
+- [Evaluación y entrega de la Fase 5](docs/phase-5-evaluation.md)
+- [Guion y evidencia del video](docs/demo-video.md)
+- [Seguridad](docs/security.md)
+
+## Limitaciones
+
+- Es software de hackathon, no una wallet de producción ni una agencia de viajes.
+- Solo usa activos sin valor en Ethereum Sepolia.
+- VisionPsy genera sugerencias; no diagnostica, reserva ni paga de forma autónoma.
+- El catálogo local necesita una actualización versionada para reflejar cambios.
+- La revalidación de tours reales y la liquidación testnet requieren conexión.
+- Los RPC públicos y el faucet pueden imponer límites ajenos a la aplicación.
+
+## Licencia
+
+Este repositorio se distribuye bajo la [licencia MIT](LICENSE).
