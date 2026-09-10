@@ -111,6 +111,12 @@ The first command requires exactly one result for every frozen case. The second
 requires at least one cold and five warm successful measurements and reports
 median and p95 TTFT, throughput, and model-load time.
 
+The 10 September physical-device batch contains 20/20 valid rows and 18
+successful inferences. It measured 25% category accuracy, 30% Top-3
+recommendation accuracy, a 43.7 s warm median TTFT, and 6.62 tokens/s warm
+median throughput. These deliberately unfiltered results are documented with
+their limitations and safety implications in `docs/phase-5-evaluation.md`.
+
 The demo recording plan is in `docs/demo-video.md`. The final link is not
 claimed until it has been tested from a signed-out browser and added as
 `DEMO_VIDEO_URL`.

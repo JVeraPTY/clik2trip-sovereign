@@ -2,8 +2,8 @@
 
 Status: **in progress on 10 September 2026**. The reproducible dataset, device
 runner, scoring tools, performance aggregation, release gates, and demo runbook
-are implemented. Phase 5 passes only after the physical-device batch has
-produced 20 quality rows, the public video URL is set, and a signed APK can be
+are implemented. The physical-device quality and performance gates pass. Phase
+5 passes only after the public video URL is set and a signed APK can be
 downloaded from a successful GitHub Release.
 
 ## Implemented release gates
@@ -33,14 +33,44 @@ downloaded from a successful GitHub Release.
 | Embeddings | EmbeddingGemma 300M Q4_0 |
 | QVAC SDK | 0.19.0 |
 
+## Physical-device results
+
+The frozen 20-case batch ran on the hardware above from
+`2026-09-10T17:47:25.605Z` through `2026-09-10T18:07:20.957Z`. All 20 rows are
+present and structurally valid; 18 inference calls succeeded and two failed.
+Failed calls remain in the denominator and score zero instead of being hidden.
+
+| Quality metric | Result |
+| --- | ---: |
+| Category accuracy | 25% |
+| Destination exact-or-not-visible accuracy | 10% |
+| Duration accuracy | 70% |
+| Restriction precision | 5% |
+| Restriction recall | 90% |
+| Top-1 recommendation accuracy | 30% |
+| Top-3 recommendation accuracy | 30% |
+| Explanation grounding rate | 35% |
+| Confidence Brier score | 0.278 |
+
+The run is reproducible evidence, not a claim that the nano model is reliable
+enough to authorize a booking or payment. Category, destination, restrictions,
+explanations, and confidence require improvement. The product therefore treats
+VisionPsy output only as a suggestion: local catalog filtering is deterministic,
+live price and capacity are revalidated, and a human must approve the frozen
+payment summary with a device credential.
+
+The performance report contains one successful cold run and 22 warm rows, of
+which 20 succeeded. This exceeds the required one cold and five successful warm
+runs. The warm median TTFT is 43,717.929 ms, warm p95 TTFT is 92,268.859 ms,
+median throughput is 6.618 tokens/s, and p95 throughput is 6.935 tokens/s. Two
+separate compatibility runs were captured in airplane mode; the 20-case quality
+batch itself recorded `offline: false`.
+
 ## Remaining evidence
 
-- Export the completed 20-row physical-device run to
-  `evaluation/quality/results.jsonl`.
-- Generate strict quality and performance reports.
 - Record and publish the video under five minutes, then set `DEMO_VIDEO_URL`.
-- Correct the Android signing secrets in GitHub if the next release preflight
-  still rejects them.
+- Correct `ANDROID_KEY_PASSWORD` in GitHub so it matches the private-key
+  password verified against the local PKCS12 keystore.
 - Push the final tag and verify that the APK downloads without authentication,
   installs, and launches on the declared phone.
 

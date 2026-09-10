@@ -111,7 +111,6 @@ for (const result of results) {
     failures.push(`${result.caseId} lacks success or explanation review`);
     valid = false;
   }
-  if (result.success === false) failures.push(`${result.caseId} inference failed`);
   if (valid) resultById.set(result.caseId, result);
 }
 

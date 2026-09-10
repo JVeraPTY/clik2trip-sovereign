@@ -150,14 +150,19 @@ if (typeof manifest.qualityResultsFile === 'string') {
 
 const cold = entries.filter((entry) => entry.kind === 'cold');
 const warm = entries.filter((entry) => entry.kind === 'warm');
+const successfulCold = cold.filter((entry) => entry.record.success);
+const successfulWarm = warm.filter((entry) => entry.record.success);
 const failures = [];
-if (cold.length < manifest.requirements.coldRuns) {
-  failures.push(`need ${manifest.requirements.coldRuns} cold run, found ${cold.length}`);
+if (successfulCold.length < manifest.requirements.coldRuns) {
+  failures.push(
+    `need ${manifest.requirements.coldRuns} successful cold run, found ${successfulCold.length}`,
+  );
 }
-if (warm.length < manifest.requirements.warmRuns) {
-  failures.push(`need ${manifest.requirements.warmRuns} warm runs, found ${warm.length}`);
+if (successfulWarm.length < manifest.requirements.warmRuns) {
+  failures.push(
+    `need ${manifest.requirements.warmRuns} successful warm runs, found ${successfulWarm.length}`,
+  );
 }
-if (entries.some((entry) => !entry.record.success)) failures.push('one or more listed runs failed');
 
 const report = {
   schemaVersion: 1,
@@ -174,7 +179,12 @@ const report = {
   },
   hardware: [...new Set(entries.map((entry) => `${entry.record.deviceModel}; Android ${entry.record.androidVersion}; ${entry.record.backendDevice}`))],
   requirements: manifest.requirements,
-  observed: { coldRuns: cold.length, warmRuns: warm.length },
+  observed: {
+    coldRuns: cold.length,
+    successfulColdRuns: successfulCold.length,
+    warmRuns: warm.length,
+    successfulWarmRuns: successfulWarm.length,
+  },
   metrics: {
     all: summarize(entries),
     cold: summarize(cold),

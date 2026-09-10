@@ -64,5 +64,6 @@ accepted values frozen in `cases.json`. It reports:
 - explanation grounding rate;
 - Brier score and mean confidence for correct and incorrect categories.
 
-Failed inference rows count as failures, including for fields whose safe default
-would otherwise match an expected unknown value.
+Failed inference rows remain valid evidence but score zero, including for fields
+whose safe default would otherwise match an expected unknown value. They are
+reported separately instead of being hidden from the denominator.
