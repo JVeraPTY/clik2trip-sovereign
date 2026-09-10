@@ -33,7 +33,40 @@ jobs:
       - name: Decode Android signing key
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-        run: echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > apps/android/android/app/sovereign-upload.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          set -euo pipefail
+          keystore=apps/android/android/app/sovereign-upload.jks
+
+          if [ -z "${ANDROID_KEYSTORE_BASE64:-}" ]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 is empty or unset."
+            exit 1
+          fi
+
+          # Tolerate any wrapping the value picked up between the file and the
+          # secret field. A newline in the middle is harmless; a stray variable
+          # name or quote is not, and shows up as invalid base64 below.
+          if ! printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 -d > "$keystore" 2>/dev/null; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 is not valid base64. Paste only the value, without the ANDROID_KEYSTORE_BASE64= prefix and without quotes."
+            exit 1
+          fi
+
+          if [ ! -s "$keystore" ]; then
+            echo "::error::The decoded keystore is empty."
+            exit 1
+          fi
+
+          # Opening it here turns a wrong password or alias into a named error
+          # now, instead of an opaque Gradle signing failure ten minutes later.
+          if ! keytool -list -keystore "$keystore" \
+              -storepass "$ANDROID_KEYSTORE_PASSWORD" \
+              -alias "$ANDROID_KEY_ALIAS" > /dev/null 2>&1; then
+            echo "::error::The keystore decoded but would not open. Check ANDROID_KEYSTORE_PASSWORD and ANDROID_KEY_ALIAS."
+            exit 1
+          fi
+
+          echo "Keystore decoded and opened: $(wc -c < "$keystore") bytes"
       - name: Build signed APK
         working-directory: apps/android/android
         env:
