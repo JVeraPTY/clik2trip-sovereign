@@ -2,7 +2,7 @@
 
 Clik2Trip Sovereign is an Android-first tourism assistant that interprets a travel image with VisionPsy on the phone, recommends compatible Clik2Trip experiences from a local catalog, and requires the traveler to review and authorize any test USD₮ transfer. The evaluated AI path does not call a cloud inference API.
 
-The physical-device compatibility gate, Phase 2, and Phase 3 passed on 9 September 2026. A physical Android phone completed camera capture, JSON-Schema-constrained VisionPsy extraction, QVAC RAG, and approved-provider recommendations in airplane mode, followed by verified deletion of the temporary photo. It then revalidated catalog, price, capacity, and an exact slot through the Clik2Trip Gateway and created a 15-minute hold with a frozen price snapshot and no payment. Phase 4 is in progress: the deterministic Policy Engine, the WDK test USD₮ transfer on Ethereum Sepolia, and independent settlement verification are implemented and awaiting their physical-device evidence run.
+The physical-device compatibility gate, Phase 2, and Phase 3 passed on 9 September 2026. A physical Android phone completed camera capture, JSON-Schema-constrained VisionPsy extraction, QVAC RAG, and approved-provider recommendations in airplane mode, followed by verified deletion of the temporary photo. It then revalidated catalog, price, capacity, and an exact slot through the Clik2Trip Gateway and created a 15-minute hold with a frozen price snapshot and no payment. Phase 4 settled on hardware on 10 September 2026: the traveler authorized a frozen summary with a device credential, the deterministic Policy Engine allowed it, WDK transferred 75.5 test USD₮ on Ethereum Sepolia, and the settlement was verified against an endpoint independent of the bundler. One evidence row, a deliberate refusal run, is still outstanding, so the phase is not recorded as passed yet.
 
 ## What is implemented
 
@@ -54,7 +54,7 @@ Only Ethereum Sepolia is enabled. Defaults use the public endpoints and test tok
 
 ## GitHub release
 
-Every push to `main` produces a standalone, debug-signed preview APK in the `Android preview` workflow. It can be downloaded from that workflow's artifacts for seven days and does not require Metro or a development computer.
+Every push to `main` produces a standalone, debug-signed preview APK in the `Android preview` workflow. It runs without Metro or a development computer, but it is a workflow artifact: downloading one requires a signed-in GitHub account even on a public repository, and it is deleted after seven days. Artifacts are for the maintainers. Anyone else — a reviewer, a judge, a tester — should be given a GitHub Release instead, whose assets download without an account and do not expire.
 
 Push a tag such as `v0.1.0-hackathon` after configuring these repository secrets:
 

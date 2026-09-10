@@ -16,3 +16,6 @@ coverage/
 .env
 .env.local
 performance-report.json
+
+# Local signing material. Never commit.
+secrets/
